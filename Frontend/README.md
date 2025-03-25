@@ -1,70 +1,54 @@
-```
-/public
-  ├── index.html
-  ├── favicon.ico
-  └── /images/
+# React + TypeScript + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-```
-/my-app
-  ├── /public/
-  ├── /src/
-    ├── /assets/           # Static assets (images, fonts, etc.)
-    ├── /components/       # Reusable components
-        ├── Button.tsx
-        ├── Modal.tsx
-        └── Navbar.tsx
-    ├── /features/         # Feature-specific logic and components (could be feature folders)
-        ├── /auth/           # Authentication-related components, hooks, reducers
-        ├── /dashboard/      # Dashboard components, hooks, etc.
-        └── /profile/        # Profile-related components
-    ├── /hooks/            # Custom React hooks
-        ├── useAuth.ts
-        ├── useFetch.ts
-        └── useForm.ts
-    ├── /layouts/          # Layout components (e.g., Header, Footer, Sidebar)
-        ├── MainLayout.tsx
-        ├── AdminLayout.tsx
-        └── DashboardLayout.tsx
-    ├── /pages/            # Page components (routes)
-            ├── Auth/
-            │   └── SignInPage.tsx
-            │   └── SignUpPage.tsx
-        ├── Dashboard.tsx
-        ├── Home.tsx
-        ├── Users.tsx
-        ├── Prodcuts.tsx
-        └── ContactUs.tsx
-    ├── /services/         # API requests, utilities, external service integrations
-        ├── authService.ts   # Authentication API
-        └── apiService.ts    # General API calls
-    ├── /store/            # State management (Redux, Zustand, Context API)
-        ├── /auth/          # Auth-related Redux slices
-        ├── /user/          # User-related Redux slices
-        └── store.ts        # Global store configuration
-    ├── /styles/           # Global styles (CSS, SASS, Styled Components)
-        ├── index.css
-        ├── theme.ts        # For theme configuration in styled-components
-        └── global.scss     # Global styles for the app
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-    ├── /types/            # TypeScript types (if using TS)
-        ├── auth.d.ts       # Types for authentication-related data
-        ├── api.d.ts        # Types for API responses
-        └── user.d.ts       # Types for user objects
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-    ├── /utils/            # Utility functions, helpers, and constants
-    ├── /config/
-        ├── index.ts        # Export environment variables and configurations
-        ├── config.ts       # Configuration file for app settings
-    ├── /app.tsx           # App component (entry point)
-    ├── /index.tsx         # Main entry point for React
-    ├── /router.tsx        # Routing (React Router setup)
-    └── /config/           # Environment variables and configuration files
-  ├── /assets/
-  ├── .gitignore
-  ├── package.json
-  ├── README.md
-  ├── tsconfig.json (for TypeScript projects)
-  ├── vite.config.js (for Vite projects)
-  └── .eslintrc.json (or .eslint.js)
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
 ```
