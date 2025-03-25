@@ -16,7 +16,18 @@ const makeApiCall = async (url: string, method: string, body: Body | null = null
         },
         body: JSON.stringify(body)
     });
-    return response.json();
+    if (response.ok) {
+        return {
+            success: true,
+            data: await response.json()
+        }
+    }else {
+        return {
+            success: false,
+            error: await response.json()
+        }
+    }
+
 }
 
 export const callApi = async (url: string, method: Method, body: Body | null = null) => {
