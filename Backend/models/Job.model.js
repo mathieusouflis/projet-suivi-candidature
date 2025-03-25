@@ -21,7 +21,7 @@ const jobSchema = new mongoose.Schema({
     required: true,
   },
   salary: {
-    type: String,  // normally we have to use Number as a type but i used String for avoiding managing ranges, we can change it later if we want.
+    type: String,  // normally we have to use Number as a type but i used String for avoiding managing ranges, we can change it later if we can change it later.
     required: true,
   },
   createdAt: {
