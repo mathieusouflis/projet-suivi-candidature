@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router';
 
 interface MainLayoutProps {
-  header: React.ReactNode;
+  header?: React.ReactNode;
 }
 
 const MainLayout = ({

@@ -14,7 +14,7 @@ const NavBar = () => {
 
 const DashboardLayout = () => {
     return (
-        <MainLayout header={<NavBar />} />
+        <MainLayout header={<NavBar/>} />
     );
   }
 
