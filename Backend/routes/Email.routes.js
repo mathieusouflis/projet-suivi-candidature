@@ -1,6 +1,3 @@
-// Email.routes.js
-// Ce fichier contient toutes les routes liées à la validation des adresses email
-
 // TODO: Importer Express
 // const express = require('express');
 // const router = express.Router();
