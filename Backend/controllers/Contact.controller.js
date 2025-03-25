@@ -1,21 +1,12 @@
-// Contact.controller.js
-// Ce controller gère toutes les opérations CRUD liées aux contacts professionnels
-
 const Contact = require('../models/Contact.model');
 const ContactJob = require('../models/ContactJob.model');
 const logger = require('../utils/Logger.util');
 
 class ContactController {
-  /**
-   * Créer un nouveau contact
-   * POST /contacts
-   * Reçoit les détails du contact (nom, prénom, rôle, téléphone, email, etc.)
-   */
   createContact = async (req, res) => {
     try {
       const { name, lastName, role, tel, email, company, notes } = req.body;
       
-      // Validation des données requises
       if (!name || !lastName || !email) {
         return res.status(400).json({ 
           success: false, 
@@ -23,7 +14,6 @@ class ContactController {
         });
       }
 
-      // Vérifier si le contact existe déjà pour cet utilisateur
       const existingContact = await Contact.findOne({ 
         email, 
         user_id: req.user.id 
@@ -36,7 +26,6 @@ class ContactController {
         });
       }
 
-      // Création du nouveau contact
       const newContact = new Contact({
         name,
         lastName,
@@ -45,10 +34,9 @@ class ContactController {
         email,
         company,
         notes,
-        user_id: req.user.id // Assumant que l'ID de l'utilisateur est disponible dans req.user
+        user_id: req.user.id
       });
 
-      // Sauvegarde dans la base de données
       const savedContact = await newContact.save();
       
       logger.info(`Nouveau contact créé: ${savedContact._id}`);
@@ -69,32 +57,24 @@ class ContactController {
     }
   }
 
-  /**
-   * Récupérer tous les contacts (avec possibilité de filtrage)
-   * GET /contacts
-   * Paramètres optionnels: nom, entreprise, etc.
-   */
   getAllContacts = async (req, res) => {
     try {
       const { name, lastName, company, email, sortBy, sortOrder } = req.query;
       
-      // Construction du filtre en fonction des paramètres
-      const filter = { user_id: req.user.id }; // Assumant que l'ID de l'utilisateur est disponible dans req.user
+      const filter = { user_id: req.user.id };
       
-      if (name) filter.name = { $regex: name, $options: 'i' }; // Recherche insensible à la casse
+      if (name) filter.name = { $regex: name, $options: 'i' }; 
       if (lastName) filter.lastName = { $regex: lastName, $options: 'i' };
       if (company) filter.company = { $regex: company, $options: 'i' };
       if (email) filter.email = { $regex: email, $options: 'i' };
       
-      // Construction des options de tri
       const sort = {};
       if (sortBy) {
         sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
       } else {
-        sort.lastName = 1; // Par défaut, tri par nom de famille
+        sort.lastName = 1;
       }
 
-      // Récupération des contacts avec filtres et tri
       const contacts = await Contact.find(filter).sort(sort);
       
       return res.status(200).json({
@@ -113,15 +93,10 @@ class ContactController {
     }
   }
 
-  /**
-   * Récupérer un contact spécifique par son ID
-   * GET /contacts/:id
-   */
   getContactById = async (req, res) => {
     try {
       const contactId = req.params.id;
       
-      // Vérification que l'ID est fourni
       if (!contactId) {
         return res.status(400).json({
           success: false,
@@ -129,10 +104,8 @@ class ContactController {
         });
       }
 
-      // Récupération du contact
       const contact = await Contact.findById(contactId);
       
-      // Vérification que le contact existe
       if (!contact) {
         return res.status(404).json({
           success: false,
@@ -140,7 +113,6 @@ class ContactController {
         });
       }
 
-      // Vérification que le contact appartient à l'utilisateur
       if (contact.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
@@ -163,16 +135,11 @@ class ContactController {
     }
   }
 
-  /**
-   * Mettre à jour un contact existant
-   * PUT /contacts/:id
-   */
   updateContact = async (req, res) => {
     try {
       const contactId = req.params.id;
       const updateData = req.body;
       
-      // Vérification que l'ID est fourni
       if (!contactId) {
         return res.status(400).json({
           success: false,
@@ -180,7 +147,6 @@ class ContactController {
         });
       }
 
-      // Vérification que le contact existe
       const contact = await Contact.findById(contactId);
       if (!contact) {
         return res.status(404).json({
@@ -189,7 +155,6 @@ class ContactController {
         });
       }
 
-      // Vérification que le contact appartient à l'utilisateur
       if (contact.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
@@ -197,7 +162,6 @@ class ContactController {
         });
       }
 
-      // Mise à jour du contact
       const updatedContact = await Contact.findByIdAndUpdate(
         contactId,
         { ...updateData, updatedAt: new Date() },
@@ -222,15 +186,10 @@ class ContactController {
     }
   }
 
-  /**
-   * Supprimer un contact
-   * DELETE /contacts/:id
-   */
   deleteContact = async (req, res) => {
     try {
       const contactId = req.params.id;
       
-      // Vérification que l'ID est fourni
       if (!contactId) {
         return res.status(400).json({
           success: false,
@@ -238,7 +197,6 @@ class ContactController {
         });
       }
 
-      // Vérification que le contact existe
       const contact = await Contact.findById(contactId);
       if (!contact) {
         return res.status(404).json({
@@ -247,7 +205,6 @@ class ContactController {
         });
       }
 
-      // Vérification que le contact appartient à l'utilisateur
       if (contact.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
@@ -255,10 +212,8 @@ class ContactController {
         });
       }
 
-      // Suppression des relations ContactJob associées
       await ContactJob.deleteMany({ contact_id: contactId });
 
-      // Suppression du contact
       await Contact.findByIdAndDelete(contactId);
       
       logger.info(`Contact supprimé: ${contactId}`);
@@ -278,16 +233,11 @@ class ContactController {
     }
   }
 
-  /**
-   * Associer un contact à une candidature
-   * POST /contacts/:contactId/job/:jobId
-   */
   linkContactToJob = async (req, res) => {
     try {
       const { contactId, jobId } = req.params;
       const { relation, notes } = req.body;
       
-      // Vérification que les IDs sont fournis
       if (!contactId || !jobId) {
         return res.status(400).json({
           success: false,
@@ -295,7 +245,6 @@ class ContactController {
         });
       }
 
-      // Vérifier que la relation n'existe pas déjà
       const existingLink = await ContactJob.findOne({
         contact_id: contactId,
         job_id: jobId
@@ -308,7 +257,6 @@ class ContactController {
         });
       }
 
-      // Création de la relation
       const newContactJob = new ContactJob({
         contact_id: contactId,
         job_id: jobId,
@@ -317,7 +265,6 @@ class ContactController {
         lastContactDate: new Date()
       });
 
-      // Sauvegarde dans la base de données
       const savedContactJob = await newContactJob.save();
       
       logger.info(`Contact associé à une candidature: ${contactId} -> ${jobId}`);

@@ -1,20 +1,11 @@
-// App.controller.js
-// Ce controller gère toutes les opérations CRUD liées aux candidatures des étudiants
-
 const Job = require('../models/Job.model');
 const logger = require('../utils/Logger.util');
 
 class ApplicationController {
-  /**
-   * Créer une nouvelle candidature
-   * POST /applications
-   * Reçoit les détails de la candidature (entreprise, poste, lien, date, statut)
-   */
   createApplication = async (req, res) => {
     try {
       const { titre, company, type, link, status, datePostulation, tags, offre } = req.body;
       
-      // Validation des données requises
       if (!titre || !company || !type) {
         return res.status(400).json({ 
           success: false, 
@@ -22,7 +13,6 @@ class ApplicationController {
         });
       }
 
-      // Création de la nouvelle candidature
       const newJob = new Job({
         titre,
         company,
@@ -32,10 +22,9 @@ class ApplicationController {
         datePostulation: datePostulation || new Date(),
         tags: tags || [],
         offre,
-        user_id: req.user.id // Assumant que l'ID de l'utilisateur est disponible dans req.user
+        user_id: req.user.id
       });
 
-      // Sauvegarde dans la base de données
       const savedJob = await newJob.save();
       
       logger.info(`Nouvelle candidature créée: ${savedJob._id}`);
@@ -56,31 +45,23 @@ class ApplicationController {
     }
   }
 
-  /**
-   * Récupérer toutes les candidatures (avec possibilité de filtrage)
-   * GET /applications
-   * Paramètres optionnels: entreprise, statut
-   */
   getAllApplications = async (req, res) => {
     try {
       const { company, status, type, sortBy, sortOrder } = req.query;
       
-      // Construction du filtre en fonction des paramètres
-      const filter = { user_id: req.user.id }; // Assumant que l'ID de l'utilisateur est disponible dans req.user
+      const filter = { user_id: req.user.id };
       
-      if (company) filter.company = { $regex: company, $options: 'i' }; // Recherche insensible à la casse
+      if (company) filter.company = { $regex: company, $options: 'i' }; 
       if (status) filter.status = status;
       if (type) filter.type = type;
       
-      // Construction des options de tri
       const sort = {};
       if (sortBy) {
         sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
       } else {
-        sort.createdAt = -1; // Par défaut, tri par date de création décroissante
+        sort.createdAt = -1;
       }
 
-      // Récupération des candidatures avec filtres et tri
       const jobs = await Job.find(filter).sort(sort);
       
       return res.status(200).json({
@@ -99,15 +80,10 @@ class ApplicationController {
     }
   }
 
-  /**
-   * Récupérer une candidature spécifique par son ID
-   * GET /applications/:id
-   */
   getApplicationById = async (req, res) => {
     try {
       const jobId = req.params.id;
       
-      // Vérification que l'ID est fourni
       if (!jobId) {
         return res.status(400).json({
           success: false,
@@ -115,10 +91,8 @@ class ApplicationController {
         });
       }
 
-      // Récupération de la candidature
       const job = await Job.findById(jobId);
       
-      // Vérification que la candidature existe
       if (!job) {
         return res.status(404).json({
           success: false,
@@ -126,7 +100,6 @@ class ApplicationController {
         });
       }
 
-      // Vérification que la candidature appartient à l'utilisateur
       if (job.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
@@ -149,16 +122,11 @@ class ApplicationController {
     }
   }
 
-  /**
-   * Mettre à jour une candidature existante
-   * PUT /applications/:id
-   */
   updateApplication = async (req, res) => {
     try {
       const jobId = req.params.id;
       const updateData = req.body;
       
-      // Vérification que l'ID est fourni
       if (!jobId) {
         return res.status(400).json({
           success: false,
@@ -166,7 +134,6 @@ class ApplicationController {
         });
       }
 
-      // Vérification que la candidature existe
       const job = await Job.findById(jobId);
       if (!job) {
         return res.status(404).json({
@@ -175,7 +142,6 @@ class ApplicationController {
         });
       }
 
-      // Vérification que la candidature appartient à l'utilisateur
       if (job.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
@@ -183,7 +149,6 @@ class ApplicationController {
         });
       }
 
-      // Mise à jour de la candidature
       const updatedJob = await Job.findByIdAndUpdate(
         jobId,
         { ...updateData, updatedAt: new Date() },
@@ -208,15 +173,10 @@ class ApplicationController {
     }
   }
 
-  /**
-   * Supprimer une candidature
-   * DELETE /applications/:id
-   */
   deleteApplication = async (req, res) => {
     try {
       const jobId = req.params.id;
       
-      // Vérification que l'ID est fourni
       if (!jobId) {
         return res.status(400).json({
           success: false,
@@ -224,7 +184,6 @@ class ApplicationController {
         });
       }
 
-      // Vérification que la candidature existe
       const job = await Job.findById(jobId);
       if (!job) {
         return res.status(404).json({
@@ -233,7 +192,6 @@ class ApplicationController {
         });
       }
 
-      // Vérification que la candidature appartient à l'utilisateur
       if (job.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
@@ -241,7 +199,6 @@ class ApplicationController {
         });
       }
 
-      // Suppression de la candidature
       await Job.findByIdAndDelete(jobId);
       
       logger.info(`Candidature supprimée: ${jobId}`);

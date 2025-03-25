@@ -1,6 +1,3 @@
-// User.controller.js
-// Ce controller gère les opérations liées aux utilisateurs (inscription, connexion, profil)
-
 const User = require('../models/User.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -8,10 +5,6 @@ const logger = require('../utils/Logger.util');
 const dbKeys = require('../config/db.keys');
 
 class UserController {
-  /**
-   * Inscription d'un nouvel utilisateur
-   * POST /users/register
-   */
   register = async (req, res) => {
     try {
       const { username, email, password, pays, statusPro } = req.body;
@@ -24,7 +17,6 @@ class UserController {
         });
       }
 
-      // Vérifier si l'utilisateur existe déjà
       const existingUser = await User.findOne({ 
         $or: [{ email }, { username }] 
       });
@@ -36,23 +28,20 @@ class UserController {
         });
       }
 
-      // Création du nouvel utilisateur
       const newUser = new User({
         username,
         email,
-        password, // Sera hashé automatiquement grâce au pre-save hook dans le modèle
+        password,
         pays,
         statusPro
       });
 
-      // Sauvegarde dans la base de données
       const savedUser = await newUser.save();
       
-      // Génération du token JWT
       const token = jwt.sign(
         { id: savedUser._id, username: savedUser.username },
         dbKeys.jwtSecret,
-        { expiresIn: '1d' } // Expire après 1 jour
+        { expiresIn: '1d' }
       );
       
       logger.info(`Nouvel utilisateur enregistré: ${savedUser._id}`);
@@ -80,15 +69,10 @@ class UserController {
     }
   }
 
-  /**
-   * Connexion d'un utilisateur existant
-   * POST /users/login
-   */
   login = async (req, res) => {
     try {
       const { email, password } = req.body;
       
-      // Validation des données requises
       if (!email || !password) {
         return res.status(400).json({ 
           success: false, 
@@ -96,10 +80,8 @@ class UserController {
         });
       }
 
-      // Recherche de l'utilisateur par email
       const user = await User.findOne({ email });
       
-      // Vérification que l'utilisateur existe
       if (!user) {
         return res.status(404).json({
           success: false,
@@ -107,7 +89,6 @@ class UserController {
         });
       }
 
-      // Vérification du mot de passe
       const isMatch = await user.comparePassword(password);
       if (!isMatch) {
         return res.status(401).json({
@@ -116,11 +97,10 @@ class UserController {
         });
       }
 
-      // Génération du token JWT
       const token = jwt.sign(
         { id: user._id, username: user.username },
         dbKeys.jwtSecret,
-        { expiresIn: '1d' } // Expire après 1 jour
+        { expiresIn: '1d' }
       );
       
       logger.info(`Utilisateur connecté: ${user._id}`);
@@ -148,13 +128,8 @@ class UserController {
     }
   }
 
-  /**
-   * Récupérer le profil de l'utilisateur connecté
-   * GET /users/profile
-   */
   getProfile = async (req, res) => {
     try {
-      // Récupération de l'utilisateur à partir de l'ID dans le token JWT
       const user = await User.findById(req.user.id).select('-password');
       
       if (!user) {
@@ -179,15 +154,10 @@ class UserController {
     }
   }
 
-  /**
-   * Mettre à jour le profil de l'utilisateur
-   * PUT /users/profile
-   */
   updateProfile = async (req, res) => {
     try {
       const { username, email, pays, statusPro, currentPassword, newPassword } = req.body;
       
-      // Recherche de l'utilisateur
       const user = await User.findById(req.user.id);
       
       if (!user) {
@@ -197,15 +167,12 @@ class UserController {
         });
       }
 
-      // Mise à jour des champs si fournis
       if (username) user.username = username;
       if (email) user.email = email;
       if (pays) user.pays = pays;
       if (statusPro) user.statusPro = statusPro;
       
-      // Mise à jour du mot de passe si fourni
       if (currentPassword && newPassword) {
-        // Vérification du mot de passe actuel
         const isMatch = await user.comparePassword(currentPassword);
         if (!isMatch) {
           return res.status(401).json({
@@ -214,11 +181,9 @@ class UserController {
           });
         }
         
-        // Mise à jour avec le nouveau mot de passe
-        user.password = newPassword; // Sera hashé automatiquement grâce au pre-save hook
+        user.password = newPassword; 
       }
 
-      // Sauvegarde des modifications
       const updatedUser = await user.save();
       
       logger.info(`Profil mis à jour: ${user._id}`);
@@ -245,13 +210,8 @@ class UserController {
     }
   }
 
-  /**
-   * Vérifier la validité du token JWT
-   * GET /users/verify-token
-   */
   verifyToken = async (req, res) => {
     try {
-      // Si la requête arrive jusqu'ici, cela signifie que le middleware d'authentification a vérifié le token
       return res.status(200).json({
         success: true,
         message: 'Token valide',
