@@ -1,17 +1,41 @@
+const dbConfig = {
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 27017,
+  name: process.env.DB_NAME || 'candidatures-app',
+  
+  authSource: process.env.DB_AUTH_SOURCE || 'admin',
+  
+  options: {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+    maxPoolSize: 10,
+    autoIndex: process.env.NODE_ENV !== 'production',
+    retryWrites: true
+  },
+  
+  schemaDefaults: {
+    timestamps: true, 
+    toJSON: { 
+      virtuals: true, 
+      transform: (doc, ret) => {
+        delete ret.__v; 
+        return ret;
+      }
+    },
+    toObject: { virtuals: true } 
+  },
+  
+  migrations: {
+    directory: './database/migrations',
+    tableName: 'migrations'
+  },
+  
+  seeds: {
+    directory: './database/seeds',
+    runOnStart: process.env.NODE_ENV === 'development'
+  }
+};
 
-// TODO: Définir les paramètres de connexion à MongoDB
-// - URI de connexion (avec gestion des environnements)
-// - Options de connexion (timeout, poolSize, etc.)
-// - Nom de la base de données
-
-// TODO: Définir les options de schéma MongoDB
-// - Paramètres par défaut pour les schémas (timestamps, etc.)
-// - Configuration des index
-
-// TODO: Définir les paramètres de migration/seed si nécessaire
-// - Chemins vers les scripts de migration
-// - Données de seed pour l'environnement de développement
-
-module.exports = {
-    // La configuration de la base de données sera exportée ici
-  };
+module.exports = dbConfig;

@@ -1,21 +1,38 @@
-// TODO: Définir la configuration du serveur
-// - Port d'écoute (avec valeur par défaut 3000)
-// - Environnement (development, production)
-// - Host
+const config = {
+  server: {
+    port: process.env.PORT || 3000,
+    host: process.env.HOST || 'localhost',
+    env: process.env.NODE_ENV || 'development'
+  },
+  
+  api: {
+    prefix: '/api/v1',
+    version: '1.0.0',
+    timeout: 30000
+  },
+  
+  security: {
+    cors: {
+      origin: '*', // En prod, spécifier les origines autorisées
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization']
+    },
+    rateLimit: {
+      windowMs: 15 * 60 * 1000,
+      max: 100
+    }
+  },
+  
+  logs: {
+    level: process.env.LOG_LEVEL || 'info',
+    file: process.env.LOG_FILE || 'application.log'
+  },
+  
+  uploads: {
+    directory: './uploads',
+    maxSize: 5 * 1024 * 1024, 
+    allowedTypes: ['image/jpeg', 'image/png', 'application/pdf']
+  }
+};
 
-// TODO: Définir la configuration de l'API
-// - Préfixe des routes (/api/v1)
-// - Version de l'API
-// - Timeout des requêtes
-
-// TODO: Définir les paramètres de sécurité
-// - Configuration CORS (origines autorisées, méthodes, headers)
-// - Limites de taux de requêtes (rate limiting)
-
-// TODO: Définir les paramètres de logging
-// - Niveau de log (info, error, debug)
-// - Destination des logs (console, fichier)
-
-module.exports = {
-    // La configuration sera exportée ici
-  };
+module.exports = config;

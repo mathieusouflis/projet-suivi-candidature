@@ -1,18 +1,15 @@
-// TODO: Définir les identifiants de connexion à la base de données
-// - Nom d'utilisateur
-// - Mot de passe
-// - Clés d'authentification
+const dbKeys = {
+  username: process.env.DB_USERNAME || '',
+  password: process.env.DB_PASSWORD || '',
+  
+  encryptionKey: process.env.DB_ENCRYPTION_KEY || 'your-encryption-key',
+  encryptionIV: process.env.DB_ENCRYPTION_IV || 'your-initialization-vector',
+  
+  jwtSecret: process.env.JWT_SECRET || 'your-jwt-secret-key',
+  sessionSecret: process.env.SESSION_SECRET || 'your-session-secret-key',
+  
+  hashAlgorithm: 'sha256',
+  hashIterations: 1000
+};
 
-// TODO: Définir les paramètres d'encryption de données sensibles si nécessaire
-// - Clés de chiffrement
-// - Algorithmes à utiliser
-
-// NOTE: Dans un environnement de production, ces informations devraient être
-// stockées dans des variables d'environnement et non directement dans ce fichier
-
-// NOTE: Ce fichier devrait être ajouté au .gitignore pour éviter de partager 
-// des informations sensibles dans le gestionnaire de versions
-
-module.exports = {
-    // Les clés sensibles seront exportées ici
-  };
+module.exports = dbKeys;
