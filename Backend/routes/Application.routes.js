@@ -1,4 +1,4 @@
-// TODO: Importer Express
+s// TODO: Importer Express
 // const express = require('express');
 // const router = express.Router();
 
@@ -20,19 +20,6 @@
 //
 // - DELETE /:id : Supprimer une candidature
 //   router.delete('/:id', ApplicationController.deleteApplication);
-
-// TODO: Routes spécifiques aux fonctionnalités supplémentaires
-// - GET /follow-up : Récupérer les candidatures à relancer
-//   router.get('/follow-up', ApplicationController.getApplicationsToFollowUp);
-//
-// - GET /stats : Récupérer les statistiques des candidatures
-//   router.get('/stats', ApplicationController.getApplicationStats);
-//
-// - GET /filter/:status : Filtrer les candidatures par statut
-//   router.get('/filter/:status', ApplicationController.filterByStatus);
-//
-// - GET /company/:company : Filtrer les candidatures par entreprise
-//   router.get('/company/:company', ApplicationController.filterByCompany);
 
 // Exporter le routeur pour l'utiliser dans App.routes.js
 // module.exports = router;
