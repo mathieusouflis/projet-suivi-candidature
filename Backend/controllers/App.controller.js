@@ -41,24 +41,6 @@ class ApplicationController {
     deleteApplication = async (req, res) => {
       // TODO: Implémenter la logique pour supprimer une candidature
     }
-  
-    /**
-     * Récupérer les candidatures à relancer
-     * GET /applications/follow-up
-     * Retourne les candidatures non mises à jour depuis plus de 7 jours
-     */
-    getApplicationsToFollowUp = async (req, res) => {
-      // TODO: Implémenter la logique pour identifier les candidatures à relancer
-    }
-  
-    /**
-     * Récupérer les statistiques des candidatures
-     * GET /applications/stats
-     * Retourne le nombre total de candidatures et leur répartition par statut
-     */
-    getApplicationStats = async (req, res) => {
-      // TODO: Implémenter la logique pour calculer les statistiques des candidatures
-    }
   }
   
   module.exports = new ApplicationController();
