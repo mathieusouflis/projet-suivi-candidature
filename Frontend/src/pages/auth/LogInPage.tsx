@@ -4,9 +4,9 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardFooter } from "@/components/ui/card";
 import { login } from "@/services/authService";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -70,6 +70,12 @@ const LoginPage = () => {
             <Button type="submit" className="w-full">Login</Button>
           </form>
         </Form>
+
+        <CardFooter className="justify-center">
+          <Link to="/auth/login">
+            <Button variant="link">Don't have an account ?</Button>
+          </Link>
+        </CardFooter>
       </Card>
     </div>
   );
