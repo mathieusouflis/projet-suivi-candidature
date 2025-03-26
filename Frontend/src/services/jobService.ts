@@ -1,5 +1,5 @@
 import { callApiWithAuth } from "./apiService";
-import { Job } from "@/types/job.ts"
+import { Job, UpdateJob } from "@/types/job.ts"
 
 export const getJobs = async () => {
     return await callApiWithAuth('/jobs', 'GET');
@@ -13,8 +13,8 @@ export const createJob = async (job: Job) => {
     return await callApiWithAuth('/jobs', 'POST', job);
 }
 
-export const updateJob = async (job: Job) => {
-    return await callApiWithAuth(`/jobs/${job.id}`, 'PUT', job);
+export const updateJob = async (id: number, changements: UpdateJob) => {
+    return await callApiWithAuth(`/jobs/${id}`, 'PUT', changements);
 }
 
 export const deleteJob = async (id: number) => {

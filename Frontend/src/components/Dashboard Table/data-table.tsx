@@ -21,8 +21,7 @@ import {
 import { Button } from "../ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useState } from "react"
-import ColumnsContextMenu from "./ColumnsContextMenu"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
+import { useNavigate } from "react-router"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -33,6 +32,8 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const navigate = useNavigate()
+  const [selectedFilter, setSelectedFilter] = useState<"All" | "Need to apply" | "Pending" | "Interview" | "Technical Test" | "Accepted" | "Rejected">("All")
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
@@ -52,39 +53,46 @@ export function DataTable<TData, TValue>({
 
 
   return (
-    <>
+    <div className="flex flex-col gap-3">
         <div className="flex flex-row gap-1">
-          <Button onClick={() => {
+          <Button variant={selectedFilter === "All" ? "" : "outline"} onClick={() => {
+            setSelectedFilter("All")
             table.getColumn("status")?.setFilterValue("")
           }}>
             All
           </Button>
-          <Button onClick={() => {
+          <Button variant={selectedFilter === "Need to apply" ? "" : "outline"} onClick={() => {
+            setSelectedFilter("Need to apply")
             table.getColumn("status")?.setFilterValue("Need to apply")
           }}>
             Need to apply
           </Button>
-          <Button onClick={() => {
+          <Button variant={selectedFilter === "Pending" ? "" : "outline"} onClick={() => {
+            setSelectedFilter("Pending")
             table.getColumn("status")?.setFilterValue("Pending")
           }}>
             Pending
           </Button>
-          <Button onClick={() => {
+          <Button variant={selectedFilter === "Interview" ? "" : "outline"} onClick={() => {
+            setSelectedFilter("Interview")
             table.getColumn("status")?.setFilterValue("Interview")
           }}>
             Interview
           </Button>
-          <Button onClick={() => {
+          <Button variant={selectedFilter === "Technical Test" ? "" : "outline"} onClick={() => {
+            setSelectedFilter("Technical Test")
             table.getColumn("status")?.setFilterValue("Technical Test")
           }}>
             Technical Test
           </Button>
-          <Button onClick={() => {
+          <Button variant={selectedFilter === "Accepted" ? "" : "outline"} onClick={() => {
+            setSelectedFilter("Accepted")
             table.getColumn("status")?.setFilterValue("Accepted")
           }}>
             Accepted
           </Button>
-          <Button onClick={() => {
+          <Button variant={selectedFilter === "Rejected" ? "" : "outline"} onClick={() => {
+            setSelectedFilter("Rejected")
             table.getColumn("status")?.setFilterValue("Rejected")
           }}>
             Rejected
@@ -113,35 +121,23 @@ export function DataTable<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <AlertDialog>
-                <ColumnsContextMenu key={row.id}>
-                <AlertDialogTrigger>
-                  <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                        ))}
-                    </TableRow>
-                  </AlertDialogTrigger>
-                    </ColumnsContextMenu>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction>Continue</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-              </AlertDialog>
+                <TableRow
+                    key={row.id}
+                    className="cursor-pointer"
+                    data-state={row.getIsSelected() && "selected"}
+                    onClick={(e) => {
+                      if(e.target instanceof HTMLButtonElement) {
+                        return;
+                      }
+                      navigate('/jobs/'+row.getValue('id'));
+                    }}
+                    >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                      ))}
+                  </TableRow>
             ))
           ) : (
             <TableRow>
@@ -161,6 +157,6 @@ export function DataTable<TData, TValue>({
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>
-    </>
+    </div>
   )
 }

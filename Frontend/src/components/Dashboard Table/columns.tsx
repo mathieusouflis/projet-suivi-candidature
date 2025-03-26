@@ -5,26 +5,8 @@ import { ChevronDown } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import { callApiWithAuth } from "@/services/apiService";
-
-type JobType = "Internship" | "Apprenticeship" | "Full-time" | "Contract" | "Freelance";
-type JobStatus = "Need to apply" | "Pending" | "Interview" | "Technical Test" | "Accepted" | "Rejected";
-
-type Job = {
-    id: string,
-    title: string,
-    company: string,
-    description: string,
-    type: JobType;
-    status: JobStatus;
-    link: string,
-    location: string,
-    salary: number,
-    createdAt: string,
-
-    postulatedDate?: string,
-    meetingDate?: string,
-    testDate?: string,
-}
+import { updateJob } from "@/services/jobService";
+import { Job, JobStatus, JobType } from "@/types/job";
 
 export const Jobs: Job[] = [
     {
@@ -67,7 +49,7 @@ export const columns: ColumnDef<Job>[] = [
             const changeStatus = (newStatus: JobStatus) => {
                 // TODO: DELETE THIS LINE
                 setStatus(newStatus);
-                callApiWithAuth('/jobs/'+row.getValue('id'), 'PATCH', {status: newStatus}).then(() => {
+                updateJob(row.getValue('id'), {status: newStatus}).then(() => {
                     setStatus(newStatus);
                 }).catch(() => {
                     console.log('Error while changing status')
@@ -99,8 +81,8 @@ export const columns: ColumnDef<Job>[] = [
         }
     },
     {
-        accessorKey: "compagny",
-        header: "compagny",
+        accessorKey: "company",
+        header: "company",
     },
     {
         accessorKey: "location",
@@ -114,10 +96,10 @@ export const columns: ColumnDef<Job>[] = [
 
             const changeType = (newType: JobType) => {
                 setType(newType);
-                callApiWithAuth('/jobs/'+row.getValue('id'), 'PATCH', {type: newType}).then(() => {
+                updateJob(row.getValue('id'), {type: newType}).then(() => {
                     setType(newType);
                 }).catch(() => {
-                    console.log('Error while changing type')
+                    console.log('Error while changing status')
                 })
             }
 
