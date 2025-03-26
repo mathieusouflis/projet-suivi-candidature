@@ -9,11 +9,11 @@ const MainLayout = ({
   header
 }: MainLayoutProps) => {
   return (
-    <div className="dashboard-layout">
-        <header className="dashboard-header">
+    <div className="h-screen w-full flex flex-col">
+        <header className="flex">
         {header}
         </header>
-        <main className="dashboard-main">
+        <main className="flex h-full">
             <Outlet />
         </main>
     </div>

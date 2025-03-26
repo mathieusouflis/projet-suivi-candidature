@@ -8,6 +8,7 @@ import Homepage from "./pages/HomePage";
 import PageNotFound from "./pages/PageNotFound";
 import MainLayout from "./layouts/MainLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
+import JobPage from "./pages/JobPage";
 
 const Router = () => {
     return (
@@ -24,6 +25,7 @@ const Router = () => {
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/contacts" element={<ContactsPage />} />
+                    <Route path="/jobs/:id" element={<JobPage />} />
                 </Route>
                 <Route path="*" element={<PageNotFound />} />
             </Routes>
