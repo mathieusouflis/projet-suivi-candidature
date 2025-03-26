@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import { ChevronDown } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
-import { callApiWithAuth } from "@/services/apiService";
 import { updateJob } from "@/services/jobService";
 import { Job, JobStatus, JobType } from "@/types/job";
 
