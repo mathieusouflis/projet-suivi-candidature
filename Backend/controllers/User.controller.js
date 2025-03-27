@@ -7,7 +7,10 @@ const dbKeys = require('../config/db.keys');
 class UserController {
   register = async (req, res) => {
     try {
-      const { username, email, password, pays, statusPro } = req.body;
+      let { username, email, password, pays, statusPro } = req.body;
+      // TODO: Setup dans le front
+      pays = "France"
+      statusPro = "Independant"
       
       if (!username || !email || !password) {
         return res.status(400).json({ 
