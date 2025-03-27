@@ -4,9 +4,9 @@ const logger = require('../utils/Logger.util');
 class ApplicationController {
   createApplication = async (req, res) => {
     try {
-      const { titre, company, type, link, status, datePostulation, tags, offre } = req.body;
+      const { title, company, type, link, status, datePostulation, location, salary, description } = req.body;
       
-      if (!titre || !company || !type) {
+      if (!title || !company || !type) {
         return res.status(400).json({ 
           success: false, 
           message: 'Veuillez fournir au moins le titre du poste, l\'entreprise et le type de poste' 
@@ -14,14 +14,15 @@ class ApplicationController {
       }
 
       const newJob = new Job({
-        titre,
+        title,
         company,
         type,
         link,
         status: status || 'En attente',
         datePostulation: datePostulation || new Date(),
-        tags: tags || [],
-        offre,
+        location: location || '',
+        salary: salary || '',
+        description: description || '',
         user_id: req.user.id
       });
 
@@ -151,7 +152,7 @@ class ApplicationController {
 
       const updatedJob = await Job.findByIdAndUpdate(
         jobId,
-        { ...updateData, updatedAt: new Date() },
+        updateData,
         { new: true, runValidators: true }
       );
 

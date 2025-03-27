@@ -1,29 +1,33 @@
-// TODO: Importer Express
-// const express = require('express');
-// const router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-// TODO: Importer tous les routeurs spécifiques
-// - routes des candidatures
-// - routes des utilisateurs
-// - routes des statistiques
-// - routes de reminders (relances)
-// - routes pour la validation des usernames
-// - routes pour la validation des emails
+const applicationRoutes = require('./Application.routes');
+const userRoutes = require('./User.routes');
+const statsRoutes = require('./Stats.routes');
+const reminderRoutes = require('./Reminder.routes');
+const contactRoutes = require('./Contact.routes');
+const authRoutes = require('./Auth.routes');
 
-// TODO: Configurer le routage principal
-// - Définir le préfixe pour chaque groupe de routes
-// - Par exemple : router.use('/applications', applicationRoutes);
-// - Par exemple : router.use('/users', userRoutes);
-// - Par exemple : router.use('/stats', statsRoutes);
-// - Par exemple : router.use('/reminders', reminderRoutes);
-// - Par exemple : router.use('/username', usernameRoutes);
-// - Par exemple : router.use('/email', emailRoutes);
+router.use('/applications', applicationRoutes);
+router.use('/users', userRoutes);
+router.use('/stats', statsRoutes);
+router.use('/reminders', reminderRoutes);
+router.use('/contacts', contactRoutes);
+router.use('/auth', authRoutes);
 
-// TODO: Ajouter une route de base pour vérifier que l'API fonctionne
-// - Par exemple : router.get('/', (req, res) => { res.status(200).json({ status: 'API is running' }); });
+router.get('/', (req, res) => { 
+  res.status(200).json({ 
+    status: 'API is running',
+    version: '1.0.0',
+    documentation: '/api-docs'
+  });
+});
 
-// TODO: Ajouter une route pour gérer les URLs non trouvées (404)
-// - Par exemple : router.use('*', (req, res) => { res.status(404).json({ error: 'Route not found' }); });
+router.use('*', (req, res) => { 
+  res.status(404).json({ 
+    success: false,
+    error: 'Route not found' 
+  });
+});
 
-// Exporter le routeur pour l'utiliser dans server.js
-// module.exports = router;
+module.exports = router;

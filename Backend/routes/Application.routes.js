@@ -1,25 +1,14 @@
-s// TODO: Importer Express
-// const express = require('express');
-// const router = express.Router();
+const express = require('express');
+const router = express.Router();
+const authMiddleware = require('../middleware/Auth.middleware');
+const ApplicationController = require('../controllers/App.controller');
 
-// TODO: Importer le controller des candidatures
-// const ApplicationController = require('../controllers/ApplicationController');
+router.use(authMiddleware);
 
-// TODO: Routes CRUD principales
-// - POST / : Créer une nouvelle candidature
-//   router.post('/', ApplicationController.createApplication);
-//
-// - GET / : Récupérer toutes les candidatures (avec filtres optionnels)
-//   router.get('/', ApplicationController.getAllApplications);
-//
-// - GET /:id : Récupérer une candidature spécifique par son ID
-//   router.get('/:id', ApplicationController.getApplicationById);
-//
-// - PUT /:id : Mettre à jour une candidature existante
-//   router.put('/:id', ApplicationController.updateApplication);
-//
-// - DELETE /:id : Supprimer une candidature
-//   router.delete('/:id', ApplicationController.deleteApplication);
+router.post('/', ApplicationController.createApplication);
+router.get('/', ApplicationController.getAllApplications);
+router.get('/:id', ApplicationController.getApplicationById);
+router.put('/:id', ApplicationController.updateApplication);
+router.delete('/:id', ApplicationController.deleteApplication);
 
-// Exporter le routeur pour l'utiliser dans App.routes.js
-// module.exports = router;
+module.exports = router;

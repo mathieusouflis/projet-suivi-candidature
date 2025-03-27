@@ -39,11 +39,17 @@ class ConfigInitializer {
 
     this.loadEnvironmentVariables();
 
+    // Configurer les options de base de données
+    let dbOptions = { ...dbConfig };
+    
+    // Si une URI MongoDB est définie, l'utiliser en priorité
+    if (process.env.MONGODB_URI) {
+      dbOptions.uri = process.env.MONGODB_URI;
+    }
+
     this.config = {
       app: appConfig,
-      db: {
-        ...dbConfig,
-      },
+      db: dbOptions,
       environment: process.env.NODE_ENV || 'development'
     };
 
@@ -62,11 +68,12 @@ class ConfigInitializer {
       throw new Error('Configuration invalide: préfixe de l\'API manquant');
     }
 
-    if (!this.config.db.host || !this.config.db.port || !this.config.db.name) {
+    // Vérifier si nous avons soit l'URI MongoDB, soit les informations de connexion traditionnelles
+    if (!process.env.MONGODB_URI && (!this.config.db.host || !this.config.db.port || !this.config.db.name)) {
       throw new Error('Configuration invalide: informations de base de données manquantes');
     }
 
-    if (!dbKeys.jwtSecret || dbKeys.jwtSecret === 'your-jwt-secret-key') {
+    if (!dbKeys.jwtSecret || dbKeys.jwtSecret === 'your-jwt-secret-key' || dbKeys.jwtSecret === 'your-secure-jwt-secret-key-change-me-in-production') {
       console.warn('Attention: clé JWT par défaut utilisée, à ne pas utiliser en production');
     }
   }

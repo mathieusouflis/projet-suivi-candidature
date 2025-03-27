@@ -13,7 +13,7 @@ const config = {
   
   security: {
     cors: {
-      origin: '*', // En prod, spécifier les origines autorisées
+      origin: '*',
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization']
     },

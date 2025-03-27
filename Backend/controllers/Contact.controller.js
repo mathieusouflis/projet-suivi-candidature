@@ -1,11 +1,11 @@
 const Contact = require('../models/Contact.model');
-const ContactJob = require('../models/ContactJob.model');
+const User = require('../models/User.model');
 const logger = require('../utils/Logger.util');
 
 class ContactController {
   createContact = async (req, res) => {
     try {
-      const { name, lastName, role, tel, email, company, notes } = req.body;
+      const { name, lastName, role, tel, email } = req.body;
       
       if (!name || !lastName || !email) {
         return res.status(400).json({ 
@@ -32,12 +32,15 @@ class ContactController {
         role,
         tel,
         email,
-        company,
-        notes,
         user_id: req.user.id
       });
 
       const savedContact = await newContact.save();
+      
+      await User.findByIdAndUpdate(
+        req.user.id,
+        { $push: { contacts: savedContact._id } }
+      );
       
       logger.info(`Nouveau contact créé: ${savedContact._id}`);
       
@@ -59,13 +62,12 @@ class ContactController {
 
   getAllContacts = async (req, res) => {
     try {
-      const { name, lastName, company, email, sortBy, sortOrder } = req.query;
+      const { name, lastName, email, sortBy, sortOrder } = req.query;
       
       const filter = { user_id: req.user.id };
       
       if (name) filter.name = { $regex: name, $options: 'i' }; 
       if (lastName) filter.lastName = { $regex: lastName, $options: 'i' };
-      if (company) filter.company = { $regex: company, $options: 'i' };
       if (email) filter.email = { $regex: email, $options: 'i' };
       
       const sort = {};
@@ -164,7 +166,7 @@ class ContactController {
 
       const updatedContact = await Contact.findByIdAndUpdate(
         contactId,
-        { ...updateData, updatedAt: new Date() },
+        updateData,
         { new: true, runValidators: true }
       );
 
@@ -212,7 +214,10 @@ class ContactController {
         });
       }
 
-      await ContactJob.deleteMany({ contact_id: contactId });
+      await User.findByIdAndUpdate(
+        req.user.id,
+        { $pull: { contacts: contactId } }
+      );
 
       await Contact.findByIdAndDelete(contactId);
       
@@ -228,58 +233,6 @@ class ContactController {
       return res.status(500).json({
         success: false,
         message: 'Erreur lors de la suppression du contact',
-        error: error.message
-      });
-    }
-  }
-
-  linkContactToJob = async (req, res) => {
-    try {
-      const { contactId, jobId } = req.params;
-      const { relation, notes } = req.body;
-      
-      if (!contactId || !jobId) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID de contact et ID de candidature requis'
-        });
-      }
-
-      const existingLink = await ContactJob.findOne({
-        contact_id: contactId,
-        job_id: jobId
-      });
-
-      if (existingLink) {
-        return res.status(400).json({
-          success: false,
-          message: 'Ce contact est déjà associé à cette candidature'
-        });
-      }
-
-      const newContactJob = new ContactJob({
-        contact_id: contactId,
-        job_id: jobId,
-        relation: relation || 'Recruteur',
-        notes,
-        lastContactDate: new Date()
-      });
-
-      const savedContactJob = await newContactJob.save();
-      
-      logger.info(`Contact associé à une candidature: ${contactId} -> ${jobId}`);
-      
-      return res.status(201).json({
-        success: true,
-        data: savedContactJob,
-        message: 'Contact associé à la candidature avec succès'
-      });
-      
-    } catch (error) {
-      logger.error(`Erreur lors de l'association d'un contact à une candidature: ${error.message}`);
-      return res.status(500).json({
-        success: false,
-        message: 'Erreur lors de l\'association',
         error: error.message
       });
     }

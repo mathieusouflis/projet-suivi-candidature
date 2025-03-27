@@ -9,7 +9,6 @@ class UserController {
     try {
       const { username, email, password, pays, statusPro } = req.body;
       
-      // Validation des données requises
       if (!username || !email || !password) {
         return res.status(400).json({ 
           success: false, 
@@ -130,7 +129,7 @@ class UserController {
 
   getProfile = async (req, res) => {
     try {
-      const user = await User.findById(req.user.id).select('-password');
+      const user = await User.findById(req.user.id).select('-password').populate('contacts');
       
       if (!user) {
         return res.status(404).json({

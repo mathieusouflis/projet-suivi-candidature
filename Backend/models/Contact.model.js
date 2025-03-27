@@ -1,35 +1,50 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-// define Contact schema
 const contactSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true,
+    trim: true
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  role: {
+    type: String,
+    trim: true
+  },
+  tel: {
+    type: String,
+    trim: true
   },
   email: {
     type: String,
     required: true,
     trim: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address.'],  // regular expression!
+    match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address.']
   },
-  message: {
-    type: String,
-    required: true,
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   createdAt: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   },
-  status: {
-    type: String,
-    enum: ['new', 'responded', 'closed'],  // possible statuses
-    default: 'new',
-  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+}, {
+  timestamps: true
 });
 
-//create a contact model
+contactSchema.index({ user_id: 1 });
+contactSchema.index({ email: 1 });
 
 const Contact = mongoose.model('Contact', contactSchema);
 
-export default Contact;
+module.exports = Contact;
