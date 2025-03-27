@@ -1,29 +1,23 @@
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
+import { useState } from "react";
 import { Button } from "../ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import JobForm from "./JobForm";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 const AddJob = () => {
+    const [open, setOpen] = useState(false);
+    
     return (
         <>
-            <AlertDialog>
-                <AlertDialogTrigger>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger>
                     <Button>Add Job</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            Create a job
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                        <JobForm />
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction>Create</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                </DialogTrigger>
+                <DialogContent className="flex flex-col">
+                    <DialogTitle>Add a job</DialogTitle>
+                    <JobForm setOpen={setOpen} />
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

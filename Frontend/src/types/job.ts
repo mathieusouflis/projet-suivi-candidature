@@ -31,3 +31,14 @@ export interface UpdateJob {
     meetingDate?: string,
     testDate?: string,
 }
+
+export interface CreateJob {
+    title: string,
+    company?: string,
+    description?: string,
+    type?: JobType;
+    status: JobStatus;
+    link?: string,
+    location?: string,
+    salary?: number,
+}

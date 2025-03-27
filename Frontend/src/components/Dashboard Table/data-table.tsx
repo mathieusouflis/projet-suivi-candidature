@@ -22,6 +22,7 @@ import { Button } from "../ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router"
+import AddJob from "../AddJob/AddJob"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -54,6 +55,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex flex-row w-full justify-between">
         <div className="flex flex-row gap-1">
           <Button variant={selectedFilter === "All" ? "" : "outline"} onClick={() => {
             setSelectedFilter("All")
@@ -97,7 +99,9 @@ export function DataTable<TData, TValue>({
           }}>
             Rejected
           </Button>
-      </div>
+        </div>
+        <AddJob />
+    </div>
     <div className="rounded-md border">
       <Table>
         <TableHeader>

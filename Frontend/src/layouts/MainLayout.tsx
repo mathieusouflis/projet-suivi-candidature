@@ -13,7 +13,7 @@ const MainLayout = ({
         <header className="flex">
         {header}
         </header>
-        <main className="flex h-full">
+        <main className="flex flex-col h-full">
             <Outlet />
         </main>
     </div>
