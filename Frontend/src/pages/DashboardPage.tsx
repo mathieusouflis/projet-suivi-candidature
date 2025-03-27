@@ -1,5 +1,6 @@
-import { columns } from "@/components/Dashboard Table/columns";
+import { Jobs, columns } from "@/components/Dashboard Table/columns";
 import { DataTable } from "@/components/Dashboard Table/data-table";
+import Chart from "@/components/Graph/Graph";
 import { getJobs } from "@/services/jobService";
 import { Job } from "@/types/job";
 import { useEffect, useState } from "react";
@@ -15,7 +16,8 @@ const DashboardPage = () => {
 
     return (
       <>
-        <DataTable columns={columns} data={jobs} />
+        <Chart />
+        <DataTable columns={columns} data={Jobs} />
       </>
     );
   }

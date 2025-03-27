@@ -1,7 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { ChevronDown } from "lucide-react";
+import { ArrowUpDown, ChevronDown } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "@radix-ui/react-dropdown-menu";
 import { useState } from "react";
 import { updateJob } from "@/services/jobService";
@@ -26,6 +26,102 @@ export const Jobs: Job[] = [
         company: "Sapalyuk",
         description: "A cool job !! OMG",
         type: "Apprenticeship", 
+        status: "Accepted",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
+        status: "Interview",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
+        status: "Need to apply",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
+        status: "Pending",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
+        status: "Rejected",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
+        status: "Technical Test",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
+        status: "Accepted",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
+        status: "Pending",
+        link: "https://localhost:3000000",
+        location: "NYC",
+        salary: 300000,
+        createdAt: "2027-01-01"
+    },
+    {
+        id: "daijdazzd",
+        title: "Job 2",
+        company: "Sapalyuk",
+        description: "A cool job !! OMG",
+        type: "Apprenticeship", 
         status: "Rejected",
         link: "https://localhost:3000000",
         location: "NYC",
@@ -41,13 +137,25 @@ export const columns: ColumnDef<Job>[] = [
     },
     {
         accessorKey: "status",
-        header: "status",
+        header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              >
+                Status
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            )
+          },
         cell: ({ row }) => {
             const [status, setStatus] = useState<JobStatus>(row.getValue("status"));
 
             const changeStatus = (newStatus: JobStatus) => {
                 // TODO: DELETE THIS LINE
+                // HINT: To update the status we have to refresh (fetch again the backend)
                 setStatus(newStatus);
+                row.renderValue(newStatus)
                 updateJob(row.getValue('id'), {status: newStatus}).then(() => {
                     setStatus(newStatus);
                 }).catch(() => {
@@ -81,15 +189,15 @@ export const columns: ColumnDef<Job>[] = [
     },
     {
         accessorKey: "company",
-        header: "company",
+        header: "Company",
     },
     {
         accessorKey: "location",
-        header: "location",
+        header: "Location",
     },
     {
         accessorKey: "type",
-        header: "type",
+        header: "Type",
         cell: ({ row }) => {
             const [type, setType] = useState<JobType>(row.getValue("type"));
 

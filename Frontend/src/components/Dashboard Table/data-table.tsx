@@ -124,10 +124,34 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+            table.getRowModel().rows.map((row) => {
+              switch (row.getValue('status')) {
+                case "Need to apply":
+                  var color = "";
+                  break;
+                case "Pending":
+                  var color = "bg-yellow-500/10";
+                  break;
+                case "Interview":
+                  var color = "bg-blue-500/10";
+                  break;
+                case "Technical Test":
+                  var color = "bg-purple-500/10";
+                  break;
+                case "Accepted":
+                  var color = "bg-green-500/10";
+                  break;
+                case "Rejected":
+                  var color = "bg-red-500/10";
+                  break;
+                default:
+                  var color = "";
+                  break;
+              }
+              return (
                 <TableRow
                     key={row.id}
-                    className="cursor-pointer"
+                    className={`cursor-pointer ${color}`}
                     data-state={row.getIsSelected() && "selected"}
                     onClick={(e) => {
                       if(e.target instanceof HTMLButtonElement) {
@@ -142,7 +166,7 @@ export function DataTable<TData, TValue>({
                       </TableCell>
                       ))}
                   </TableRow>
-            ))
+            )})
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
