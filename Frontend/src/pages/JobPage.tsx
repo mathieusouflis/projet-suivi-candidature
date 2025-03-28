@@ -51,7 +51,6 @@ const JobPage = () => {
         fetchJob();
     }, []);
 
-//TODO: Find the type of timeout effect
 const handleChangements = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | {target: { value: string}}, valueTimeout: any, setTimeoutEffect: any, key: keyof Job): void => {
     const newValue = e.target.value;
     setJob(prev => prev? {...prev, [key]: newValue } : null);

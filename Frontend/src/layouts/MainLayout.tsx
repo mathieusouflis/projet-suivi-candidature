@@ -17,7 +17,7 @@ const MainLayout = ({ header, aside = null, children }: MainLayoutProps) => {
         <aside>
           {aside ? aside : null}
         </aside>
-        <div className="flex-col flex min-w-screen p-3 mt-5">
+        <div className="flex-col flex w-full p-3 mt-5">
           {children || <Outlet />}
         </div>
       </main>

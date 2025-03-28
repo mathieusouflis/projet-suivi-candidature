@@ -32,7 +32,7 @@ export function ChartPerStatus() {
   }
   
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
-  const [lineData, setLineData] = useState<ChartDataMonth[]>([]); // Replace with your actual data struc
+  const [lineData, setLineData] = useState<ChartDataMonth[]>([]);
 
   const getData = async (): Promise<{ status: ChartDataItem[], month: ChartDataMonth[] }> => {
     const stats = await getStats();

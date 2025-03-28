@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardFooter } from "@/components/ui/card";
 import { login } from "@/services/authService";
 import { Link, useNavigate } from "react-router";
+import { useContext } from "react";
+import { AuthContext } from "@/middleware/Token.middleware";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email").nonempty("Email is required"),
@@ -15,6 +17,7 @@ const formSchema = z.object({
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { loginUser } = useContext(AuthContext);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -29,9 +32,9 @@ const LoginPage = () => {
     if (!result.success) {
       form.setError("email", { message: result.error.message });
       return;
-    }else {
+    } else {
       const data = result.data;
-      document.cookie = `token=${JSON.stringify(data.token)}; path=/; max-age=86400; secure; samesite=strict`;
+      loginUser(data.token);
       navigate("/dashboard");
     }
   }
@@ -72,7 +75,7 @@ const LoginPage = () => {
         </Form>
 
         <CardFooter className="justify-center">
-          <Link to="/auth/login">
+          <Link to="/auth/register">
             <Button variant="link">Don't have an account ?</Button>
           </Link>
         </CardFooter>

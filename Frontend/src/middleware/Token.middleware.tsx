@@ -1,20 +1,44 @@
+import { createContext, useState, useEffect, ReactNode } from "react";
 
-import { Outlet, useNavigate } from 'react-router-dom';
-
-interface ProtectedRouteProps {
-  redirectPath: string; 
+interface AuthContextType {
+  isAuthenticated: boolean;
+  loginUser: (token: string) => void;
+  logoutUser: () => void;
 }
 
-const ProtectedRoute = ({ redirectPath }: ProtectedRouteProps) => {
-  
-    const token = localStorage.getItem('token');
-      const navigate = useNavigate();
-  
-  if (!token) {
-    return navigate(redirectPath)
-  }
-  
-  return <Outlet />;
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  loginUser: () => {},
+  logoutUser: () => {},
+});
+
+const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    localStorage.getItem("token") ? true : false
+  );
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const loginUser = (token: string): void => {
+    localStorage.setItem("token", token);
+    setIsAuthenticated(true);
+  };
+
+  const logoutUser = (): void => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+  };
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, loginUser, logoutUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
-export default ProtectedRoute;
+export { AuthContext, AuthProvider };

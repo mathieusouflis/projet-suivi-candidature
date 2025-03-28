@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createJob } from "@/services/jobService";
-import { JobType } from "@/types/job";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 import { SelectGroup, SelectLabel, SelectValue } from "@radix-ui/react-select";
 
