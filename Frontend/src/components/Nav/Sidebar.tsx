@@ -35,7 +35,15 @@ const Sidebar: React.FC = () => {
           )}
         </div>
 
-        {/* Dashboard Link */}
+        
+        <button 
+          onClick={toggleSidebar}
+          className="mb-4 text-sm bg-gray-700 text-white p-2 rounded-md"
+        >
+          Toggle Sidebar
+        </button>
+
+        
         <div className="mb-4">
           <button 
             className="w-full text-left p-2 text-sm bg-gray-700 hover:bg-gray-600 rounded-md"
@@ -45,6 +53,7 @@ const Sidebar: React.FC = () => {
           </button>
         </div>
 
+        
         <div className="mb-4">
           <button 
             className="w-full text-left p-2 text-sm bg-gray-700 hover:bg-gray-600 rounded-md"
@@ -55,9 +64,8 @@ const Sidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* main content */}
+      
       <div className="flex-1 p-6 bg-gray-100">
-        {/* content will go here */}
       </div>
     </div>
   );
