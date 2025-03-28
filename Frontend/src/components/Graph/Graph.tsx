@@ -1,9 +1,10 @@
 import { Pie, PieChart } from "recharts"
+import { TrendingUp } from "lucide-react"
+import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
 
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -25,10 +26,15 @@ export function ChartPerStatus() {
     number: number;
     fill: string;
   }
+  interface ChartDataMonth {
+    month: string;
+    desktop: number;
+  }
   
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
+  const [lineData, setLineData] = useState<ChartDataMonth[]>([]); // Replace with your actual data struc
 
-  const getData = async (): Promise<{ status: ChartDataItem[] }> => {
+  const getData = async (): Promise<{ status: ChartDataItem[], month: ChartDataMonth[] }> => {
     const stats = await getStats();
     return {
       status: [
@@ -38,7 +44,11 @@ export function ChartPerStatus() {
         { status: "TechinalTest", number: stats.data.byStatus["Technical Test"], fill: "var(--chart-4)" },
         { status: "Accepted", number: stats.data.byStatus["Accepted"], fill: "var(--chart-2)" },
         { status: "Rejected", number: stats.data.byStatus["Rejected"], fill: "var(--chart-5)" },
-      ]
+      ],
+      month: stats.data.byMonth.map((item: ChartDataMonth) => ({
+        month: item.month,
+        desktop: item.desktop
+      }))
     };
   };
 
@@ -46,13 +56,14 @@ export function ChartPerStatus() {
     const fetchData = async () => {
         const data = await getData();
         setChartData(data.status)
+        setLineData(data.month)
     };
 
     fetchData();
   }, []);
 
   
-  const chartConfig = {
+  const camembertConfig = {
     visitors: {
       label: "Visitors",
     },
@@ -81,15 +92,22 @@ export function ChartPerStatus() {
       color: "hsl(var(--chart-5))",
     },
   } satisfies ChartConfig
+  const lineConfig = {
+    desktop: {
+      label: "Desktop",
+      color: "hsl(var(--chart-2))",
+    }
+  } satisfies ChartConfig
 
   return (
+    <>
     <Card className="flex flex-col w-md min-w-xs">
       <CardHeader className="items-center pb-0">
         <CardTitle>Status</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
-          config={chartConfig}
+          config={camembertConfig}
           className="mx-auto aspect-square max-h-[250px] pb-0 [&_.recharts-pie-label-text]:fill-foreground"
         >
           <PieChart>
@@ -100,38 +118,15 @@ export function ChartPerStatus() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
-}
-
-import { TrendingUp } from "lucide-react"
-import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
-
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-2))",
-  }
-} satisfies ChartConfig
-
-export function ChartPerMonth() {
-  return (
     <Card className="min-w-sm">
       <CardHeader>
         <CardTitle>Total applications per month</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={lineConfig}>
           <LineChart
             accessibilityLayer
-            data={chartData}
+            data={lineData}
             margin={{
               top: 20,
               left: 12,
@@ -181,5 +176,6 @@ export function ChartPerMonth() {
         </div>
       </CardFooter>
     </Card>
+    </>
   )
 }

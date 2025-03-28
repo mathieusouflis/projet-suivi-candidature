@@ -48,8 +48,6 @@ export const columns: ColumnDef<Job>[] = [
             const [status, setStatus] = useState<JobStatus>(row.getValue("status"));
 
             const changeStatus = (newStatus: JobStatus) => {
-                // TODO: DELETE THIS LINE
-                setStatus(newStatus);
                 updateJob(row.getValue('_id'), {status: newStatus}).then(() => {
                     setStatus(newStatus);
                 }).catch(() => {
