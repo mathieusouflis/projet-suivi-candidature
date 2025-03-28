@@ -5,16 +5,38 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const compression = require('compression');
-const config = require('../config/init').get('app');
 const logger = require('../utils/Logger.util');
 
 const setupMiddleware = (app) => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
   
-  app.use(cors(config.security.cors));
+  const corsOptions = {
+    origin: "*", 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+  };
   
-  app.use(helmet());
+  app.use(cors(corsOptions));
+  
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: false, 
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          connectSrc: ["'self'", corsOptions.origin],
+          frameSrc: ["'self'"],
+          childSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", "data:"],
+        },
+      },
+    })
+  );
   
   app.use(compression());
   
@@ -28,11 +50,11 @@ const setupMiddleware = (app) => {
   
   if (process.env.NODE_ENV === 'production') {
     const limiter = rateLimit({
-      windowMs: config.security.rateLimit.windowMs,
-      max: config.security.rateLimit.max,
+      windowMs: 15 * 60 * 1000, 
+      max: 100,
       message: {
         success: false,
-        message: 'Trop de requêtes, veuillez réessayer plus tard.'
+        message: 'Too many requests, please try again later.'
       }
     });
     app.use(limiter);

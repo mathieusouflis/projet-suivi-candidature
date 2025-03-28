@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User.model');
-const dbKeys = require('../config/db.keys');
 const logger = require('../utils/Logger.util');
 
 const authMiddleware = async (req, res, next) => {
@@ -10,20 +9,19 @@ const authMiddleware = async (req, res, next) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         success: false,
-        message: 'Accès non autorisé. Aucun token fourni.'
+        message: 'Unauthorized access. No token provided.'
       });
     }
     
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1].split('"')[1];
     
-    const decoded = jwt.verify(token, dbKeys.jwtSecret);
-    
-    const user = await User.findById(decoded.id).select('-password');
-    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  
+    const user = await User.findById(decoded.id);
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Utilisateur non trouvé ou token invalide.'
+        message: 'User not found or invalid token.'
       });
     }
     
@@ -34,25 +32,25 @@ const authMiddleware = async (req, res, next) => {
     
     next();
   } catch (error) {
-    logger.error(`Erreur d'authentification: ${error.message}`);
+    logger.error(`Authentication error: ${error.message}`);
     
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         success: false,
-        message: 'Token invalide.'
+        message: 'Invalid token.'
       });
     }
     
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
-        message: 'Token expiré. Veuillez vous reconnecter.'
+        message: 'Token expired. Please login again.'
       });
     }
     
     return res.status(500).json({
       success: false,
-      message: 'Erreur de serveur lors de l\'authentification.',
+      message: 'Server error during authentication.',
       error: error.message
     });
   }

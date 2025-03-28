@@ -7,10 +7,10 @@ class StatsController {
     try {
       const userId = req.user.id;
       
-      const totalCount = await Job.countDocuments({ user_id: userId });
+      const totalCount = await Job.countDocuments({ user_id: new mongoose.Types.ObjectId(userId) });
       
       const statsByStatus = await Job.aggregate([
-        { $match: { user_id: mongoose.Types.ObjectId(userId) } },
+        { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
         { $group: {
             _id: '$status',
             count: { $sum: 1 }
@@ -20,9 +20,12 @@ class StatsController {
       ]);
       
       const statusStats = {
-        'En attente': 0,
-        'Acceptée': 0,
-        'Refusée': 0
+        'Need to apply': 0,
+        'Pending': 0,
+        'Interview': 0,
+        'Technical Test': 0,
+        'Accepted': 0,
+        'Rejected': 0
       };
       
       statsByStatus.forEach(stat => {
@@ -30,7 +33,7 @@ class StatsController {
       });
       
       const statsByCompany = await Job.aggregate([
-        { $match: { user_id: mongoose.Types.ObjectId(userId) } },
+        { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
         { $group: {
             _id: '$company',
             count: { $sum: 1 }
@@ -42,14 +45,14 @@ class StatsController {
       
       const toRemind = await Job.countDocuments({
         user_id: userId,
-        status: 'En attente',
+        status: 'Pending',
         updatedAt: { 
           $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) 
         }
       });
       
       const statsByType = await Job.aggregate([
-        { $match: { user_id: mongoose.Types.ObjectId(userId) } },
+        { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
         { $group: {
             _id: '$type',
             count: { $sum: 1 }
@@ -58,9 +61,11 @@ class StatsController {
       ]);
       
       const typeStats = {
-        'Stage': 0,
-        'Alternance': 0,
-        'Emploi': 0
+        'Internship': 0,
+        'Apprenticeship': 0,
+        'Full-time': 0,
+        'Contract': 0,
+        'Freelance': 0
       };
       
       statsByType.forEach(stat => {
@@ -68,10 +73,10 @@ class StatsController {
       });
       
       const statsByMonth = await Job.aggregate([
-        { $match: { user_id: mongoose.Types.ObjectId(userId) } },
+        { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
         { $project: {
-            month: { $month: '$datePostulation' },
-            year: { $year: '$datePostulation' },
+            month: { $month: '$createdAt' },
+            year: { $year: '$createdAt' },
             status: 1
           }
         },
@@ -96,10 +101,10 @@ class StatsController {
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la récupération des statistiques: ${error.message}`);
+      logger.error(`Error fetching statistics: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la récupération des statistiques',
+        message: 'Error fetching statistics',
         error: error.message
       });
     }

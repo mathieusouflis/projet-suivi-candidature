@@ -2,20 +2,16 @@ const User = require('../models/User.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const logger = require('../utils/Logger.util');
-const dbKeys = require('../config/db.keys');
 
 class UserController {
   register = async (req, res) => {
     try {
-      let { username, email, password, pays, statusPro } = req.body;
-      // TODO: Setup dans le front
-      pays = "France"
-      statusPro = "Independant"
+      let { username, email, password } = req.body;
       
       if (!username || !email || !password) {
         return res.status(400).json({ 
           success: false, 
-          message: 'Veuillez fournir un nom d\'utilisateur, un email et un mot de passe' 
+          message: 'Please provide a username, email and password' 
         });
       }
 
@@ -26,7 +22,7 @@ class UserController {
       if (existingUser) {
         return res.status(400).json({
           success: false,
-          message: 'Un utilisateur avec cet email ou ce nom d\'utilisateur existe déjà'
+          message: 'A user with this email or username already exists'
         });
       }
 
@@ -34,38 +30,36 @@ class UserController {
         username,
         email,
         password,
-        pays,
-        statusPro
+        pays: "France",
+        statusPro: "Étudiant"
       });
 
       const savedUser = await newUser.save();
       
       const token = jwt.sign(
-        { id: savedUser._id, username: savedUser.username },
-        dbKeys.jwtSecret,
+        { id: saveduser._id.toString(), username: savedUser.username },
+        process.env.JWT_SECRET,
         { expiresIn: '1d' }
       );
       
-      logger.info(`Nouvel utilisateur enregistré: ${savedUser._id}`);
+      logger.info(`New user registered: ${saveduser._id.toString()}`);
       
       return res.status(201).json({
         success: true,
         token,
         user: {
-          id: savedUser._id,
+          id: saveduser._id.toString(),
           username: savedUser.username,
-          email: savedUser.email,
-          pays: savedUser.pays,
-          statusPro: savedUser.statusPro
+          email: savedUser.email
         },
-        message: 'Inscription réussie'
+        message: 'Registration successful'
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de l'inscription: ${error.message}`);
+      logger.error(`Registration error: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de l\'inscription',
+        message: 'Error during registration',
         error: error.message
       });
     }
@@ -78,7 +72,7 @@ class UserController {
       if (!email || !password) {
         return res.status(400).json({ 
           success: false, 
-          message: 'Veuillez fournir un email et un mot de passe' 
+          message: 'Please provide email and password' 
         });
       }
 
@@ -87,7 +81,7 @@ class UserController {
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'Utilisateur non trouvé'
+          message: 'User not found'
         });
       }
 
@@ -95,36 +89,36 @@ class UserController {
       if (!isMatch) {
         return res.status(401).json({
           success: false,
-          message: 'Mot de passe incorrect'
+          message: 'Invalid password'
         });
       }
 
       const token = jwt.sign(
-        { id: user._id, username: user.username },
-        dbKeys.jwtSecret,
+        { id: user._id.toString(), username: user.username },
+        process.env.JWT_SECRET,
         { expiresIn: '1d' }
       );
       
-      logger.info(`Utilisateur connecté: ${user._id}`);
+      logger.info(`User logged in: ${user._id.toString()}`);
       
       return res.status(200).json({
         success: true,
-        token,
-        user: {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          pays: user.pays,
-          statusPro: user.statusPro
+        data: {
+          token,
+          user: {
+            id: user._id.toString(),
+            username: user.username,
+            email: user.email
+          },
         },
-        message: 'Connexion réussie'
+        message: 'Login successful'
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la connexion: ${error.message}`);
+      logger.error(`Login error: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la connexion',
+        message: 'Error during login',
         error: error.message
       });
     }
@@ -132,12 +126,12 @@ class UserController {
 
   getProfile = async (req, res) => {
     try {
-      const user = await User.findById(req.user.id).select('-password').populate('contacts');
+      const user = await User.findById(req.user.id).select('-password');
       
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'Utilisateur non trouvé'
+          message: 'User not found'
         });
       }
       
@@ -147,10 +141,10 @@ class UserController {
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la récupération du profil: ${error.message}`);
+      logger.error(`Error fetching profile: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la récupération du profil',
+        message: 'Error fetching profile',
         error: error.message
       });
     }
@@ -158,28 +152,26 @@ class UserController {
 
   updateProfile = async (req, res) => {
     try {
-      const { username, email, pays, statusPro, currentPassword, newPassword } = req.body;
+      const { username, email, currentPassword, newPassword } = req.body;
       
       const user = await User.findById(req.user.id);
       
       if (!user) {
         return res.status(404).json({
           success: false,
-          message: 'Utilisateur non trouvé'
+          message: 'User not found'
         });
       }
 
       if (username) user.username = username;
       if (email) user.email = email;
-      if (pays) user.pays = pays;
-      if (statusPro) user.statusPro = statusPro;
       
       if (currentPassword && newPassword) {
         const isMatch = await user.comparePassword(currentPassword);
         if (!isMatch) {
           return res.status(401).json({
             success: false,
-            message: 'Mot de passe actuel incorrect'
+            message: 'Current password is incorrect'
           });
         }
         
@@ -188,25 +180,23 @@ class UserController {
 
       const updatedUser = await user.save();
       
-      logger.info(`Profil mis à jour: ${user._id}`);
+      logger.info(`Profile updated: ${user._id.toString()}`);
       
       return res.status(200).json({
         success: true,
         data: {
-          id: updatedUser._id,
+          id: updateduser._id.toString(),
           username: updatedUser.username,
-          email: updatedUser.email,
-          pays: updatedUser.pays,
-          statusPro: updatedUser.statusPro
+          email: updatedUser.email
         },
-        message: 'Profil mis à jour avec succès'
+        message: 'Profile updated successfully'
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la mise à jour du profil: ${error.message}`);
+      logger.error(`Error updating profile: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la mise à jour du profil',
+        message: 'Error updating profile',
         error: error.message
       });
     }
@@ -216,17 +206,17 @@ class UserController {
     try {
       return res.status(200).json({
         success: true,
-        message: 'Token valide',
+        message: 'Valid token',
         user: {
           id: req.user.id,
           username: req.user.username
         }
       });
     } catch (error) {
-      logger.error(`Erreur lors de la vérification du token: ${error.message}`);
+      logger.error(`Token verification error: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la vérification du token',
+        message: 'Error verifying token',
         error: error.message
       });
     }
