@@ -24,8 +24,6 @@ class ConfigInitializer {
       console.log(`Chargement des variables d'environnement depuis ${envPath}`);
       let result;
       if(process.env.NODE_ENV === "prod"){
-        console.log("C'EST DEL A PROD --------------------------------");
-        
         result = dotenv.config();
       }else {
         result = dotenv.config({ path: envPath });
