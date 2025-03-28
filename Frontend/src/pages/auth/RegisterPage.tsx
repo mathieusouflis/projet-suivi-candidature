@@ -110,7 +110,7 @@ const Register = () => {
         </Form>
         <CardFooter className="justify-center">
           <Link to="/auth/login">
-            <Button variant="link">Allready have an account ?</Button>
+            <Button variant="link">Already have an account ?</Button>
           </Link>
         </CardFooter>
       </Card>

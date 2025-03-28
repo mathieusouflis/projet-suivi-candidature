@@ -11,7 +11,7 @@ const MainLayout = ({ header, aside = null, children }: MainLayoutProps) => {
   return (
     <div className="h-screen w-full flex flex-col">
       <header className="flex">
-        {header}
+        {header}²
       </header>
       <main className="flex flex-row h-full">
         <aside>
