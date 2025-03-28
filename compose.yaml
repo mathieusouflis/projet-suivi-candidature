@@ -15,7 +15,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,12 +32,14 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
-      - NODE_ENV=production
+      - NODE_ENV=development
       - MONGODB_URI=mongodb://mongodb:27017/job-applications
       - JWT_SECRET=${JWT_SECRET:-default_jwt_secret_do_not_use_in_production}
       - SESSION_SECRET=${SESSION_SECRET:-default_session_secret_do_not_use_in_production}
       - LOG_LEVEL=info
     volumes:
+      - ./Backend:/app
+      - /app/node_modules
       - ./Backend/logs:/app/logs
     depends_on:
       mongodb:
@@ -64,8 +66,7 @@ services:
       - ./Frontend:/app
       - /app/node_modules
     environment:
-      - API_BASE_URL=http://localhost:3000/api/v1
-      - MODE=development
+      - VITE_API_BASE_URL=http://backend:3000/api/v1
     depends_on:
       - backend
     networks:

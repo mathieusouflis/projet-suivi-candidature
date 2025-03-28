@@ -9,4 +9,6 @@ COPY . .
 
 EXPOSE 5173
 
+RUN apk add --no-cache wget
+
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
