@@ -1,10 +1,18 @@
 import { TypographyH1, TypographyH2 } from '@/components/ui/Typograpgy';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
+import { PopoverContent } from '@/components/ui/popover';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 import { getJobById, updateJob } from '@/services/jobService';
 import { Job } from '@/types/job';
 import { Label } from '@radix-ui/react-label';
+import { Popover, PopoverTrigger } from '@radix-ui/react-popover';
+import { format } from 'date-fns';
+import { CalendarIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 
@@ -19,6 +27,7 @@ const JobPage = () => {
     const [linkTimeout, setLinkTimeout] = useState<NodeJS.Timeout | null>(null);
     const [locationTimeout, setLocationTimeout] = useState<NodeJS.Timeout | null>(null);
     const [salaryTimeout, setSalaryTimeout] = useState<NodeJS.Timeout | null>(null);
+    const [date, setDate] = useState<Date>()
 
 
 
@@ -41,7 +50,7 @@ const JobPage = () => {
     }, [id]);
 
 //TODO: Find the type of timeout effect
-const handleChangements = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, valueTimeout: any, setTimeoutEffect: any, key: keyof Job): void => {
+const handleChangements = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | {target: { value: string}}, valueTimeout: any, setTimeoutEffect: any, key: keyof Job): void => {
     const newValue = e.target.value;
     setJob(prev => prev? {...prev, [key]: newValue } : null);
     console.log(job);
@@ -66,8 +75,9 @@ const handleChangements = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
     
     setTimeoutEffect(timeout);
 };
-
-    if (!job) return <div>Job not found</div>;
+const statusOptions = ["Need to apply", "Pending", "Interview", "Technical Test", "Accepted", "Rejected"];
+const typeOptions = ["Internship", "Apprenticeship", "Full-time", "Contract", "Freelance"];
+    // if (!job) return <div>Job not found</div>;
 
     return (
         <>
@@ -91,12 +101,61 @@ const handleChangements = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
                     </div>
                     <div>
                         <Label>Type</Label>
-                        <Input type='text' id="Type" placeholder='Type' defaultValue={job?.type || ""} onChange={(e) => handleChangements(e, typeTimeout, setTypeTimeout, "type")}/>
+                        <Select onValueChange={(e) => handleChangements({target: {value: e}}, typeTimeout, setTypeTimeout, "status")}>
+                          <SelectTrigger>
+                            <SelectValue placeholder={job?.type || "No status"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Status</SelectLabel>
+                                    {typeOptions?.map((option) => (
+                                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                                    ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                     </div>
                     <div>
                         <Label>Status</Label>
-                        <Input type='text' id="Status" placeholder='Status' defaultValue={job?.status || ""} onChange={(e) => handleChangements(e, statusTimeout, setStatusTimeout, "status")}/>
+                        <Select onValueChange={(e) => handleChangements({target: {value: e}}, statusTimeout, setStatusTimeout, "type")}>
+                          <SelectTrigger>
+                            <SelectValue placeholder={job?.status || "No status"} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Status</SelectLabel>
+                                    {statusOptions?.map((option) => (
+                                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                                    ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                     </div>
+                    {job?.status === "Pending" && <div>
+                        <Label>Postulated Date</Label>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "w-[280px] justify-start text-left font-normal",
+                                    !date && "text-muted-foreground"
+                                )}
+                                >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                </Button>
+                            </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                    mode="single"
+                                    selected={date}
+                                    onSelect={setDate}
+                                    initialFocus
+                                    />
+                                </PopoverContent>
+                        </Popover>
+                    </div>}
                     <div>
                         <Label>Link</Label>
                         <Input type='text' id="Link" placeholder='Link' defaultValue={job?.link || ""} onChange={(e) => handleChangements(e, linkTimeout, setLinkTimeout, "link")}/>

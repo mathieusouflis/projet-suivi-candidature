@@ -6,6 +6,7 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from "@rad
 import { useState } from "react";
 import { updateJob } from "@/services/jobService";
 import { Job, JobStatus, JobType } from "@/types/job";
+import { Badge } from "../ui/badge";
 
 export const Jobs: Job[] = [
     {
@@ -122,15 +123,26 @@ export const Jobs: Job[] = [
         company: "Sapalyuk",
         description: "A cool job !! OMG",
         type: "Apprenticeship", 
-        status: "Rejected",
+        status: "Pending",
         link: "https://localhost:3000000",
         location: "NYC",
         salary: 300000,
-        createdAt: "2027-01-01"
+        createdAt: "2027-01-01",
+        postulatedDate: "2022-01-01"
     },
 ]
   
 export const columns: ColumnDef<Job>[] = [
+    {
+        accessorKey: "postulatedDate",
+        header: "Relance",
+        cell: ({ row }) => {
+                console.log(row.getValue("postulatedDate"))
+                const date = new Date(row.getValue("postulatedDate"))
+                return date.getTime() - Date.now() <= 7 * 24 * 60 * 60 * 1000 && row.getValue("status") === "Pending" ? 
+                <Badge className="bg-amber-300">Relaunch</Badge> : null
+        }
+    },
     {
         accessorKey: "title",
         header: "title",
@@ -153,9 +165,7 @@ export const columns: ColumnDef<Job>[] = [
 
             const changeStatus = (newStatus: JobStatus) => {
                 // TODO: DELETE THIS LINE
-                // HINT: To update the status we have to refresh (fetch again the backend)
                 setStatus(newStatus);
-                row.renderValue(newStatus)
                 updateJob(row.getValue('id'), {status: newStatus}).then(() => {
                     setStatus(newStatus);
                 }).catch(() => {
