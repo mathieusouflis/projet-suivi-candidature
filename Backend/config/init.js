@@ -44,10 +44,8 @@ class ConfigInitializer {
 
     this.loadEnvironmentVariables();
 
-    // Configurer les options de base de données
     let dbOptions = { ...dbConfig };
     
-    // Si une URI MongoDB est définie, l'utiliser en priorité
     if (process.env.MONGODB_URI) {
       dbOptions.uri = process.env.MONGODB_URI;
     }
