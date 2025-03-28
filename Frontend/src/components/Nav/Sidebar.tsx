@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [settingsVisible, setSettingsVisible] = useState(false);
+const Sidebar: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [settingsVisible, setSettingsVisible] = useState<boolean>(false);
 
-  const toggleSidebar = () => {
+  const toggleSidebar = (): void => {
     setIsOpen(!isOpen);
   };
 
-  const handleProfileClick = () => {
+  const handleProfileClick = (): void => {
     setSettingsVisible(!settingsVisible);
   };
 
@@ -35,7 +35,7 @@ const Sidebar = () => {
           )}
         </div>
 
-        {/* dashboard Link */}
+        {/* Dashboard Link */}
         <div className="mb-4">
           <button 
             className="w-full text-left p-2 text-sm bg-gray-700 hover:bg-gray-600 rounded-md"
@@ -45,7 +45,6 @@ const Sidebar = () => {
           </button>
         </div>
 
-       
         <div className="mb-4">
           <button 
             className="w-full text-left p-2 text-sm bg-gray-700 hover:bg-gray-600 rounded-md"
@@ -56,7 +55,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* main Content */}
+      {/* main content */}
       <div className="flex-1 p-6 bg-gray-100">
         {/* content will go here */}
       </div>
