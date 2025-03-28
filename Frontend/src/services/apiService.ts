@@ -26,7 +26,6 @@ export const callApi = async (url: string, method: Method, body: Body | null = n
 
 export const callApiWithAuth = async (url: string, method: Method, body: Body | null = null) => {
     const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
-    console.log(token);
     
     if (!token) {
         return {

@@ -18,7 +18,6 @@ import { useParams } from 'react-router';
 
 const JobPage = () => {
     const { id } = useParams() as {id: string};
-    console.log(id)
     const [job, setJob] = useState<Job | null>(null);
     const [titleTimeout, setTitleTimeout] = useState<NodeJS.Timeout | null>(null);
     const [descriptionTimeout, setDescriptionTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -56,7 +55,6 @@ const JobPage = () => {
 const handleChangements = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | {target: { value: string}}, valueTimeout: any, setTimeoutEffect: any, key: keyof Job): void => {
     const newValue = e.target.value;
     setJob(prev => prev? {...prev, [key]: newValue } : null);
-    console.log(job);
     
     
     if (valueTimeout) {
