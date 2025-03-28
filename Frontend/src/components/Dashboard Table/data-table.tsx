@@ -158,7 +158,7 @@ export function DataTable<TData, TValue>({
                       if(e.target instanceof HTMLButtonElement) {
                         return;
                       }
-                      navigate('/jobs/'+row.getValue('id'));
+                      navigate('/jobs/'+row.getValue('_id'));
                     }}
                     >
                     {row.getVisibleCells().map((cell) => (

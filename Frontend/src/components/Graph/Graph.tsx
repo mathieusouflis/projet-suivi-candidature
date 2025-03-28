@@ -1,11 +1,10 @@
-"use client"
-
-import { TrendingUp } from "lucide-react"
 import { Pie, PieChart } from "recharts"
 
 import {
   Card,
   CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -17,46 +16,72 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { status: "NeedToApply", number: 275, fill: "hsl(210 40% 98%)" },
-  { status: "Pending", number: 200, fill: "var(--chart-3)" },
-  { status: "Interview", number: 187, fill: "var(--chart-1)" },
-  { status: "TechinalTest", number: 173, fill: "var(--chart-4)" },
-  { status: "Accepted", number: 90, fill: "var(--chart-2)" },
-  { status: "Rejected", number: 90, fill: "var(--chart-5)" },
-]
+import { getStats } from "@/services/statsService"
+import { useEffect, useState } from "react";
 
-const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  NeedToApply: {
-    label: "Need to apply",
-    color: "hsl(210 40% 98%)",
-  },
-  Pending: {
-    label: "Pending",
-    color: "hsl(var(--chart-2))",
-  },
-  Interview: {
-    label: "Interview",
-    color: "hsl(var(--chart-3))",
-  },
-  TechinalTest: {
-    label: "Techinal Test",
-    color: "hsl(var(--chart-4))",
-  },
-  Accepted: {
-    label: "Accepted",
-    color: "hsl(var(--chart-5))",
-  },
-  Rejected: {
-    label: "Rejected",
-    color: "hsl(var(--chart-5))",
-  },
-} satisfies ChartConfig
+export function ChartPerStatus() {
+  interface ChartDataItem {
+    status: string;
+    number: number;
+    fill: string;
+  }
+  
+  const [chartData, setChartData] = useState<ChartDataItem[]>([]);
 
-function Chart() {
+  const getData = async (): Promise<{ status: ChartDataItem[] }> => {
+    const stats = await getStats();
+    return {
+      status: [
+        { status: "NeedToApply", number: stats.data.byStatus["Need to apply"], fill: "hsl(210 40% 98%)" },
+        { status: "Pending", number: stats.data.byStatus["Pending"], fill: "var(--chart-3)" },
+        { status: "Interview", number: stats.data.byStatus["Interview"], fill: "var(--chart-1)" },
+        { status: "TechinalTest", number: stats.data.byStatus["Technical Test"], fill: "var(--chart-4)" },
+        { status: "Accepted", number: stats.data.byStatus["Accepted"], fill: "var(--chart-2)" },
+        { status: "Rejected", number: stats.data.byStatus["Rejected"], fill: "var(--chart-5)" },
+      ]
+    };
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+        const data = await getData();
+        setChartData(data.status)
+    };
+
+    fetchData();
+  }, []);
+
+  
+  const chartConfig = {
+    visitors: {
+      label: "Visitors",
+    },
+    NeedToApply: {
+      label: "Need to apply",
+      color: "hsl(210 40% 98%)",
+    },
+    Pending: {
+      label: "Pending",
+      color: "hsl(var(--chart-2))",
+    },
+    Interview: {
+      label: "Interview",
+      color: "hsl(var(--chart-3))",
+    },
+    TechinalTest: {
+      label: "Techinal Test",
+      color: "hsl(var(--chart-4))",
+    },
+    Accepted: {
+      label: "Accepted",
+      color: "hsl(var(--chart-5))",
+    },
+    Rejected: {
+      label: "Rejected",
+      color: "hsl(var(--chart-5))",
+    },
+  } satisfies ChartConfig
+
   return (
     <Card className="flex flex-col w-md min-w-xs">
       <CardHeader className="items-center pb-0">
@@ -78,4 +103,83 @@ function Chart() {
   )
 }
 
-export default Chart;
+import { TrendingUp } from "lucide-react"
+import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts"
+const chartData = [
+  { month: "January", desktop: 186 },
+  { month: "February", desktop: 305 },
+  { month: "March", desktop: 237 },
+  { month: "April", desktop: 73 },
+  { month: "May", desktop: 209 },
+  { month: "June", desktop: 214 },
+]
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-2))",
+  }
+} satisfies ChartConfig
+
+export function ChartPerMonth() {
+  return (
+    <Card className="min-w-sm">
+      <CardHeader>
+        <CardTitle>Total applications per month</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ChartContainer config={chartConfig}>
+          <LineChart
+            accessibilityLayer
+            data={chartData}
+            margin={{
+              top: 20,
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="line" />}
+            />
+            <Line
+              dataKey="desktop"
+              type="natural"
+              stroke="var(--chart-2)"
+              strokeWidth={2}
+              dot={{
+                fill: "var(--chart-2)",
+              }}
+              activeDot={{
+                r: 6,
+              }}
+            >
+              <LabelList
+                position="top"
+                offset={12}
+                className="fill-foreground"
+                fontSize={12}
+              />
+            </Line>
+          </LineChart>
+        </ChartContainer>
+      </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 font-medium leading-none">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="leading-none text-muted-foreground">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
+    </Card>
+  )
+}

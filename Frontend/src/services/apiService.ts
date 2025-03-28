@@ -14,19 +14,9 @@ const makeApiCall = async (url: string, method: string, body: Body | null = null
             'Content-Type': 'application/json',
             ...headers
         },
-        body: JSON.stringify(body)
+        body: body ? JSON.stringify(body) : null,
     });
-    if (response.ok) {
-        return {
-            success: true,
-            data: await response.json()
-        }
-    }else {
-        return {
-            success: false,
-            error: await response.json()
-        }
-    }
+    return await response.json();
 
 }
 
@@ -36,6 +26,8 @@ export const callApi = async (url: string, method: Method, body: Body | null = n
 
 export const callApiWithAuth = async (url: string, method: Method, body: Body | null = null) => {
     const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+    console.log(token);
+    
     if (!token) {
         return {
             success: false,

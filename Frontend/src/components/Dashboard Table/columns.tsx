@@ -7,139 +7,23 @@ import { useState } from "react";
 import { updateJob } from "@/services/jobService";
 import { Job, JobStatus, JobType } from "@/types/job";
 import { Badge } from "../ui/badge";
-
-export const Jobs: Job[] = [
-    {
-        id: "daijzd",
-        title: "Job 1",
-        company: "Veired",
-        description: "A cool job ! OMG",
-        type: "Freelance", 
-        status: "Need to apply",
-        link: "https://localhost:3000000",
-        location: "Paris",
-        salary: 10000,
-        createdAt: "2021-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Accepted",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Interview",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Need to apply",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Pending",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Rejected",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Technical Test",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Accepted",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Pending",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01"
-    },
-    {
-        id: "daijdazzd",
-        title: "Job 2",
-        company: "Sapalyuk",
-        description: "A cool job !! OMG",
-        type: "Apprenticeship", 
-        status: "Pending",
-        link: "https://localhost:3000000",
-        location: "NYC",
-        salary: 300000,
-        createdAt: "2027-01-01",
-        postulatedDate: "2022-01-01"
-    },
-]
   
 export const columns: ColumnDef<Job>[] = [
+    
     {
-        accessorKey: "postulatedDate",
+        accessorKey: "_id",
+        header: "",
+        cell: () => {
+                return <></>
+        }
+    },
+    {
+        accessorKey: "datePostulation",
         header: "Relance",
         cell: ({ row }) => {
-                console.log(row.getValue("postulatedDate"))
-                const date = new Date(row.getValue("postulatedDate"))
-                return date.getTime() - Date.now() <= 7 * 24 * 60 * 60 * 1000 && row.getValue("status") === "Pending" ? 
+                const date = new Date(row.getValue("datePostulation"))
+                
+                return (Date.now() - date.getTime()) >= 604800000 && row.getValue("status") === "Pending" ?
                 <Badge className="bg-amber-300">Relaunch</Badge> : null
         }
     },
@@ -166,7 +50,7 @@ export const columns: ColumnDef<Job>[] = [
             const changeStatus = (newStatus: JobStatus) => {
                 // TODO: DELETE THIS LINE
                 setStatus(newStatus);
-                updateJob(row.getValue('id'), {status: newStatus}).then(() => {
+                updateJob(row.getValue('_id'), {status: newStatus}).then(() => {
                     setStatus(newStatus);
                 }).catch(() => {
                     console.log('Error while changing status')
@@ -213,7 +97,7 @@ export const columns: ColumnDef<Job>[] = [
 
             const changeType = (newType: JobType) => {
                 setType(newType);
-                updateJob(row.getValue('id'), {type: newType}).then(() => {
+                updateJob(row.getValue('_id'), {type: newType}).then(() => {
                     setType(newType);
                 }).catch(() => {
                     console.log('Error while changing status')

@@ -9,8 +9,8 @@ import { login } from "@/services/authService";
 import { Link, useNavigate } from "react-router";
 
 const formSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character")
+  email: z.string().email("Invalid email").nonempty("Email is required"),
+  password: z.string().nonempty("Password is required"),
 })
 
 const LoginPage = () => {

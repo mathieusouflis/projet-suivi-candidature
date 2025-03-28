@@ -9,10 +9,10 @@ import { register } from "@/services/authService";
 import { Link, useNavigate } from "react-router";
 
 const formSchema = z.object({
-  email: z.string().email("Invalid email"),
-  username: z.string().min(4, "Username must be at least 4 characters long"),
-  password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character"),
-  passwordConfirm: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Confirm Password must contain at least 8 characters, including uppercase, lowercase, number, and special character"),
+  email: z.string().email("Invalid email").nonempty("Email is required"),
+  username: z.string().min(4, "Username must be at least 4 characters long").nonempty("Username is required"),
+  password: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/, "Password must contain at least 8 characters, including uppercase, lowercase, and number").nonempty("Password is required"),
+  passwordConfirm: z.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/, "Confirm Password must contain at least 8 characters, including uppercase, lowercase, and number").nonempty("Confirm Password is required"),
 })
 
 const Register = () => {
@@ -44,7 +44,7 @@ const Register = () => {
     }else {
       const user = result.data;
       localStorage.setItem("user", JSON.stringify(user));
-      navigate("/dashboard");
+      navigate("/auth/login");
     }
   }
 
@@ -81,7 +81,7 @@ const Register = () => {
               />
             <FormField 
               control={form.control} 
-              name="email" 
+              name="password" 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>

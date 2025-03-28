@@ -12,7 +12,7 @@ export interface Job {
     salary: number,
     createdAt: string,
 
-    postulatedDate?: string,
+    datePostulation?: string,
     meetingDate?: string,
     testDate?: string,
 }
