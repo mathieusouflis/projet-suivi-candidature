@@ -32,71 +32,53 @@ class StatsController {
         statusStats[stat._id] = stat.count;
       });
       
-      const statsByCompany = await Job.aggregate([
-        { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
-        { $group: {
-            _id: '$company',
-            count: { $sum: 1 }
-          }
-        },
-        { $sort: { count: -1 } },
-        { $limit: 5 }
-      ]);
-      
-      const toRemind = await Job.countDocuments({
-        user_id: userId,
-        status: 'Pending',
-        updatedAt: { 
-          $lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) 
-        }
-      });
-      
-      const statsByType = await Job.aggregate([
-        { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
-        { $group: {
-            _id: '$type',
-            count: { $sum: 1 }
-          }
-        }
-      ]);
-      
-      const typeStats = {
-        'Internship': 0,
-        'Apprenticeship': 0,
-        'Full-time': 0,
-        'Contract': 0,
-        'Freelance': 0
-      };
-      
-      statsByType.forEach(stat => {
-        typeStats[stat._id] = stat.count;
-      });
-      
       const statsByMonth = await Job.aggregate([
-        { $match: { user_id: new mongoose.Types.ObjectId(userId) } },
-        { $project: {
-            month: { $month: '$createdAt' },
-            year: { $year: '$createdAt' },
-            status: 1
+        { $match: { 
+            user_id: new mongoose.Types.ObjectId(userId),
+            createdAt: { 
+              $gte: new Date(new Date().setMonth(new Date().getMonth() - 5)), 
+              $lte: new Date() 
+            }
           }
         },
         { $group: {
-            _id: { month: '$month', year: '$year', status: '$status' },
+            _id: { 
+              month: { $month: '$createdAt' },
+              year: { $year: '$createdAt' }
+            },
             count: { $sum: 1 }
           }
         },
         { $sort: { '_id.year': 1, '_id.month': 1 } }
       ]);
-      
+
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June', 
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      const monthlyStats = statsByMonth.map(stat => ({
+        month: months[stat._id.month - 1],
+        desktop: stat.count
+      }));
+
+      const currentDate = new Date();
+      const last6Months = Array.from({ length: 6 }, (_, i) => {
+        const d = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+        return months[d.getMonth()];
+      }).reverse();
+
+      const completeMonthlyStats = last6Months.map(month => {
+        const existingStat = monthlyStats.find(stat => stat.month === month);
+        return existingStat || { month, desktop: 0 };
+      });
+
       return res.status(200).json({
         success: true,
         data: {
           total: totalCount,
           byStatus: statusStats,
-          byType: typeStats,
-          byCompany: statsByCompany,
-          toRemind: toRemind,
-          byMonth: statsByMonth
+          byMonth: completeMonthlyStats
         }
       });
       
