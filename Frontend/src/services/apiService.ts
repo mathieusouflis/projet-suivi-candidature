@@ -35,7 +35,15 @@ export const callApi = async (url: string, method: Method, body: Body | null = n
 }
 
 export const callApiWithAuth = async (url: string, method: Method, body: Body | null = null) => {
-    const token = localStorage.getItem('token');
+    const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+    if (!token) {
+        return {
+            success: false,
+            error: {
+                message: 'No token found'
+            }
+        }
+    }
     return makeApiCall(url, method, body, {
         'Authorization': `Bearer ${token}`
     });

@@ -30,8 +30,8 @@ const LoginPage = () => {
       form.setError("email", { message: result.error.message });
       return;
     }else {
-      const user = result.data;
-      localStorage.setItem("user", JSON.stringify(user));
+      const data = result.data;
+      document.cookie = `token=${JSON.stringify(data.token)}; path=/; max-age=86400; secure; samesite=strict`;
       navigate("/dashboard");
     }
   }

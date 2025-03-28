@@ -76,9 +76,7 @@ const handleChangements = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
                     <TypographyH1>
                         {job?.title || "No jobs"}
                     </TypographyH1>
-                    <Textarea className='resize-none h-full' placeholder='Job description' defaultValue={job?.description} onChange={(e) => handleChangements(e, descriptionTimeout, setDescriptionTimeout, "description")}>
-                        {job?.description || "No description"}
-                    </Textarea>
+                    <Textarea className='resize-none h-full' placeholder='Job description' defaultValue={job?.description || "No description"} onChange={(e) => handleChangements(e, descriptionTimeout, setDescriptionTimeout, "description")} />
                 </div>
                 <Separator orientation='vertical'/>
                 <div className="p-4 w-sm flex flex-col gap-3">

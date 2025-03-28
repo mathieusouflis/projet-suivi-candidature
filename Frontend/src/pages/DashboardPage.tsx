@@ -15,10 +15,10 @@ const DashboardPage = () => {
     })
 
     return (
-      <>
+      <div className="flex flex-col gap-4">
         <Chart />
         <DataTable columns={columns} data={Jobs} />
-      </>
+      </div>
     );
   }
   
