@@ -22,7 +22,14 @@ class ConfigInitializer {
 
     if (fs.existsSync(envPath)) {
       console.log(`Chargement des variables d'environnement depuis ${envPath}`);
-      const result = dotenv.config({ path: envPath });
+      let result;
+      if(process.env.NODE_ENV === "prod"){
+        console.log("C'EST DEL A PROD --------------------------------");
+        
+        result = dotenv.config();
+      }else {
+        result = dotenv.config({ path: envPath });
+      }
       
       if (result.error) {
         console.error(`Erreur lors du chargement des variables d'environnement: ${result.error}`);

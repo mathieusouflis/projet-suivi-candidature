@@ -1,11 +1,8 @@
 const express = require('express');
-const mongoose = require('mongoose');
-const path = require('path');
-const fs = require('fs');
 
 const config = require('./config/init').initialize();
 const appConfig = config.app;
-
+const dotenv = require('dotenv');
 const { initializeRoutes } = require('./routes/router');
 const { setupMiddleware } = require('./middleware/App.middleware');
 const logger = require('./utils/Logger.util');

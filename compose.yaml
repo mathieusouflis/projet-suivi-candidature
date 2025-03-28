@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  mongodb:
+      image: mongo:latest
+      ports:
+        - "27017:27017"
+      restart: always
+
+      volumes:
+        - mongodb_data:/data/db
+      networks:
+        - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:5173"
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=3000
+      - HOST=localhost
+      - NODE_ENV=prod
+      - MONGODB_URI=mongodb://mongodb:27017/
+      - DB_NAME=candidatures
+      - JWT_SECRET=your_jwt_secret_here
+      - SESSION_SECRET=your_session_secret_here
+      - LOG_LEVEL=info
+      - LOG_FILE=application.log
+    networks:
+      - app-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge
