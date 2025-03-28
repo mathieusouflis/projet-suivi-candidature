@@ -1,20 +1,23 @@
+
+import { AppSidebar } from "@/components/Nav/Sidebar";
 import MainLayout from "./MainLayout";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 const NavBar = () => {
     return (
-        <div>
-            <ul>
-                <li>Home</li>
-                <li>About</li>
-                <li>Contact</li>
-            </ul>
-        </div>
-    );
+        <SidebarProvider>
+            <div className="flex flex-row gap-3">
+            <AppSidebar/>
+            <SidebarTrigger/>
+            </div>
+        </SidebarProvider>
+    )
+
 }
 
 const DashboardLayout = () => {
     return (
-        <MainLayout header={<NavBar/>} />
+        <MainLayout aside={<NavBar/>} />
     );
   }
 

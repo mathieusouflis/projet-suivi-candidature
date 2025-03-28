@@ -37,7 +37,7 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="h-full flex items-center justify-center">
       <Card className="p-4 sm:w-sm lg:w-lg xl:w-lg">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
