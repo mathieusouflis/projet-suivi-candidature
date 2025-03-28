@@ -60,7 +60,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Email" {...field} />
+                    <Input placeholder="Email" type="email" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-400" />
                 </FormItem>
@@ -86,7 +86,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Password" {...field} />
+                    <Input placeholder="Password" type="password" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-400" />
                 </FormItem>
@@ -99,7 +99,7 @@ const Register = () => {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Confirm Password" {...field} />
+                    <Input placeholder="Confirm Password" type="password" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-400"/>
                 </FormItem>
