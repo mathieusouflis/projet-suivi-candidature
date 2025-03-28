@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const jobSchema = new mongoose.Schema({
   status: {
     type: String,
-    enum: ['En attente', 'Acceptée', 'Refusée'],
-    default: 'En attente'
+    enum: ['Need to apply', 'Pending', 'Interview', 'Technical Test', 'Accepted', 'Rejected'],
+    default: 'Need to apply'
   },
   datePostulation: {
     type: Date,
@@ -19,8 +19,8 @@ const jobSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['Stage', 'Alternance', 'Emploi'],
-    default: 'Stage'
+    enum: ['Internship', 'Apprenticeship', 'Full-time', 'Contract', 'Freelance'],
+    default: 'Internship'
   },
   link: {
     type: String,
@@ -53,8 +53,8 @@ const jobSchema = new mongoose.Schema({
     trim: true
   },
   salary: {
-    type: String,
-    trim: true
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true
@@ -71,7 +71,7 @@ jobSchema.statics.findJobsToRemind = function(userId, daysThreshold = 7) {
   
   return this.find({
     user_id: userId,
-    status: 'En attente',
+    status: 'Pending',
     updatedAt: { $lt: thresholdDate }
   });
 };

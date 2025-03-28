@@ -1,46 +1,47 @@
 const Job = require('../models/Job.model');
 const logger = require('../utils/Logger.util');
+const mongoose = require('mongoose');
 
 class ApplicationController {
   createApplication = async (req, res) => {
     try {
-      const { title, company, type, link, status, datePostulation, location, salary, description } = req.body;
+      const { title, company, type, link, status, location, salary, description } = req.body;
       
-      if (!title || !company || !type) {
+      if (!title) {
         return res.status(400).json({ 
           success: false, 
-          message: 'Veuillez fournir au moins le titre du poste, l\'entreprise et le type de poste' 
+          message: 'Title is required' 
         });
       }
 
       const newJob = new Job({
         title,
-        company,
-        type,
-        link,
-        status: status || 'En attente',
-        datePostulation: datePostulation || new Date(),
+        company: company || '',
+        type: type || 'Internship',
+        link: link || '',
+        status: status || 'Need to apply',
+        datePostulation: new Date(),
         location: location || '',
-        salary: salary || '',
+        salary: salary || 0,
         description: description || '',
         user_id: req.user.id
       });
 
       const savedJob = await newJob.save();
       
-      logger.info(`Nouvelle candidature créée: ${savedJob._id}`);
+      logger.info(`New job application created: ${savedJob._id}`);
       
       return res.status(201).json({
         success: true,
         data: savedJob,
-        message: 'Candidature créée avec succès'
+        message: 'Job application created successfully'
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la création d'une candidature: ${error.message}`);
+      logger.error(`Error creating job application: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la création de la candidature',
+        message: 'Error creating job application',
         error: error.message
       });
     }
@@ -72,10 +73,10 @@ class ApplicationController {
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la récupération des candidatures: ${error.message}`);
+      logger.error(`Error fetching job applications: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la récupération des candidatures',
+        message: 'Error fetching job applications',
         error: error.message
       });
     }
@@ -88,7 +89,7 @@ class ApplicationController {
       if (!jobId) {
         return res.status(400).json({
           success: false,
-          message: 'ID de candidature non fourni'
+          message: 'Job ID is required'
         });
       }
 
@@ -97,14 +98,14 @@ class ApplicationController {
       if (!job) {
         return res.status(404).json({
           success: false,
-          message: 'Candidature non trouvée'
+          message: 'Job application not found'
         });
       }
 
       if (job.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
-          message: 'Accès non autorisé à cette candidature'
+          message: 'Unauthorized access to this job application'
         });
       }
 
@@ -114,10 +115,10 @@ class ApplicationController {
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la récupération d'une candidature: ${error.message}`);
+      logger.error(`Error fetching job application: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la récupération de la candidature',
+        message: 'Error fetching job application',
         error: error.message
       });
     }
@@ -131,7 +132,7 @@ class ApplicationController {
       if (!jobId) {
         return res.status(400).json({
           success: false,
-          message: 'ID de candidature non fourni'
+          message: 'Job ID is required'
         });
       }
 
@@ -139,14 +140,14 @@ class ApplicationController {
       if (!job) {
         return res.status(404).json({
           success: false,
-          message: 'Candidature non trouvée'
+          message: 'Job application not found'
         });
       }
 
       if (job.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
-          message: 'Accès non autorisé à cette candidature'
+          message: 'Unauthorized access to this job application'
         });
       }
 
@@ -156,19 +157,19 @@ class ApplicationController {
         { new: true, runValidators: true }
       );
 
-      logger.info(`Candidature mise à jour: ${jobId}`);
+      logger.info(`Job application updated: ${jobId}`);
       
       return res.status(200).json({
         success: true,
         data: updatedJob,
-        message: 'Candidature mise à jour avec succès'
+        message: 'Job application updated successfully'
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la mise à jour d'une candidature: ${error.message}`);
+      logger.error(`Error updating job application: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la mise à jour de la candidature',
+        message: 'Error updating job application',
         error: error.message
       });
     }
@@ -181,7 +182,7 @@ class ApplicationController {
       if (!jobId) {
         return res.status(400).json({
           success: false,
-          message: 'ID de candidature non fourni'
+          message: 'Job ID is required'
         });
       }
 
@@ -189,31 +190,31 @@ class ApplicationController {
       if (!job) {
         return res.status(404).json({
           success: false,
-          message: 'Candidature non trouvée'
+          message: 'Job application not found'
         });
       }
 
       if (job.user_id.toString() !== req.user.id) {
         return res.status(403).json({
           success: false,
-          message: 'Accès non autorisé à cette candidature'
+          message: 'Unauthorized access to this job application'
         });
       }
 
       await Job.findByIdAndDelete(jobId);
       
-      logger.info(`Candidature supprimée: ${jobId}`);
+      logger.info(`Job application deleted: ${jobId}`);
       
       return res.status(200).json({
         success: true,
-        message: 'Candidature supprimée avec succès'
+        message: 'Job application deleted successfully'
       });
       
     } catch (error) {
-      logger.error(`Erreur lors de la suppression d'une candidature: ${error.message}`);
+      logger.error(`Error deleting job application: ${error.message}`);
       return res.status(500).json({
         success: false,
-        message: 'Erreur lors de la suppression de la candidature',
+        message: 'Error deleting job application',
         error: error.message
       });
     }
