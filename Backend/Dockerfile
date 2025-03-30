@@ -7,7 +7,7 @@ RUN npm install
 
 COPY . .
 
-RUN mkdir -p logs
+RUN mkdir -p logs && chmod 777 logs
 
 RUN apk add --no-cache wget
 

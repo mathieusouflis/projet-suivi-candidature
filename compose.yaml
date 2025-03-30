@@ -40,7 +40,7 @@ services:
     volumes:
       - ./Backend:/app
       - /app/node_modules
-      - ./Backend/logs:/app/logs
+      - backend_logs:/app/logs
     depends_on:
       mongodb:
         condition: service_healthy
@@ -48,11 +48,16 @@ services:
       - app-network
     healthcheck:
       test:
-        ["CMD", "wget", "--quiet", "--spider", "http://localhost:3000/api/v1"]
+        [
+          "CMD",
+          "bash",
+          "-c",
+          "wget --quiet --spider http://localhost:3000/api/v1 || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 15s
 
   # Frontend Web Application
   frontend:
@@ -67,7 +72,7 @@ services:
       - ./Frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_BASE_URL=http://backend:3000/api/v1
+      - VITE_API_BASE_URL=http://localhost:3000/api/v1
     depends_on:
       - backend
     networks:
@@ -76,6 +81,8 @@ services:
 volumes:
   mongodb_data:
     name: jobapp-mongodb-data
+  backend_logs:
+    name: jobapp-backend-logs
 
 networks:
   app-network:
