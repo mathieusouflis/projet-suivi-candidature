@@ -1,170 +1,155 @@
 # Job Application Tracker
 
-## Overview
+A web application built with a React/TypeScript frontend and Node.js/Express/MongoDB backend to help you manage your job applications.
 
-Job Application Tracker is a full-stack web application designed to help users organize and manage their job applications. It provides a comprehensive dashboard to track application statuses, manage interview dates, and store contact information related to job opportunities.
+## Project Overview
 
-## Features
+This application helps users track their job applications with features including:
 
-- **User Authentication**: Secure login and registration system
-- **Interactive Dashboard**: Visual representation of application statuses and statistics
-- **Application Management**: Track job applications with details such as:
-  - Job title
-  - Company
-  - Status (Need to apply, Pending, Interview, Technical Test, Accepted, Rejected)
-  - Type (Internship, Apprenticeship, Full-time, Contract, Freelance)
-  - Application dates
-  - Location and salary information
-- **Contact Management**: Store and organize professional contacts
-- **Reminder System**: Get alerts for applications that need follow-up
+- Dashboard with status visualization
+- Adding and managing job applications 
+- Tracking application status (Need to apply, Pending, Interview, Technical Test, etc.)
+- Managing professional contacts
+- Viewing statistics about your job search
 
 ## Tech Stack
 
 ### Frontend
-- React with TypeScript
-- React Router for navigation
-- React Hook Form with Zod for form validation
+- React 18 with TypeScript
+- Vite for build tool
 - Tailwind CSS for styling
+- React Router for navigation
+- React Hook Form for form management
 - Recharts for data visualization
 - ShadCN UI components
 
 ### Backend
 - Node.js with Express
-- MongoDB for database storage
+- MongoDB database
 - JWT for authentication
 - Winston for logging
 
-## Installation
+## Setup and Installation
 
 ### Prerequisites
-- Node.js (v18 or later)
-- MongoDB (installed locally or accessible remotely)
+- Node.js (v18 or higher)
+- npm or yarn
+- MongoDB (local installation or MongoDB Atlas account)
 
-### Backend Setup
-1. Navigate to the Backend directory
-```bash
-cd Backend
-```
+### Setting up the Backend
 
-2. Install dependencies
-```bash
-npm install
-```
+1. Navigate to the Backend directory:
+   ```bash
+   cd Backend
+   ```
 
-3. Create a `.env` file based on `.env.example`
-```bash
-# Server configuration
-PORT=3000
-HOST=localhost
-NODE_ENV=development
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-# MongoDB connection
-MONGODB_URI=mongodb://localhost:27017/job-tracker
+3. Create a `.env` file in the Backend directory with the following variables:
+   ```
+   PORT=3000
+   HOST=localhost
+   NODE_ENV=development
+   MONGODB_URI=mongodb://localhost:27017/job-applications
+   JWT_SECRET=your_jwt_secret_here
+   SESSION_SECRET=your_session_secret_here
+   LOG_LEVEL=info
+   LOG_FILE=application.log
+   ```
+   
+   If you're using MongoDB Atlas, replace the MONGODB_URI with your connection string.
 
-# Security
-JWT_SECRET=your_secure_jwt_secret
-SESSION_SECRET=your_secure_session_secret
+4. Create a logs directory:
+   ```bash
+   mkdir logs
+   ```
 
-# Logging
-LOG_LEVEL=info
-LOG_FILE=application.log
-```
+5. Start the backend server:
+   ```bash
+   npm run dev
+   ```
 
-4. Start the backend server
-```bash
-npm run dev
-```
+### Setting up the Frontend
 
-### Frontend Setup
-1. Navigate to the Frontend directory
-```bash
-cd Frontend
-```
+1. Navigate to the Frontend directory:
+   ```bash
+   cd Frontend
+   ```
 
-2. Install dependencies
-```bash
-npm install
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-3. Create a configuration file or modify the existing one to point to your backend
-```bash
-# src/config/config.ts
-const config = {
-    api: {
-        baseUrl: "http://localhost:3000/api/v1",
-        timeout: 5000,
-    },
-    frontend: {
-        MODE: "development",
-    }
-}
+3. Modify the API base URL in the `src/config/config.ts` file if needed:
+   ```typescript
+   const config = {
+     api: {
+       baseUrl: "http://localhost:3000/api/v1",
+       timeout: 5000,
+     },
+     frontend: {
+       MODE: import.meta.env.MODE || "development",
+     },
+   };
+   ```
 
-export default config;
-```
+4. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
 
-4. Start the frontend development server
-```bash
-npm run dev
-```
-
-5. Access the application at http://localhost:5173
+5. Access the application at `http://localhost:5173`
 
 ## Usage
 
-1. Register a new account or login with existing credentials
-2. Navigate to the dashboard to view your job application statistics
-3. Add new job applications using the "Add Job" button
-4. Click on any job in the table to view and edit its details
-5. Use the filters to sort applications by status
+1. Register a new account using the registration page
+2. Log in with your credentials
+3. Use the dashboard to view and manage your job applications
+4. Add new job applications using the "Add Job" button
+5. Track the status of each application and update details as needed
 
-## API Endpoints
+## Troubleshooting
 
-### Authentication
-- `POST /api/v1/auth/register` - Register a new user
-- `POST /api/v1/auth/login` - Login an existing user
+### Common Issues
 
-### Applications
-- `GET /api/v1/applications` - Get all applications
-- `GET /api/v1/applications/:id` - Get application by ID
-- `POST /api/v1/applications` - Create a new application
-- `PUT /api/v1/applications/:id` - Update an application
-- `DELETE /api/v1/applications/:id` - Delete an application
+1. **MongoDB Connection Error**:
+   - Make sure MongoDB is running locally or your Atlas connection string is correct
+   - Check network connection and firewall settings
 
-### Contacts
-- `GET /api/v1/contacts` - Get all contacts
-- `GET /api/v1/contacts/:id` - Get contact by ID
-- `POST /api/v1/contacts` - Add a new contact
-- `PUT /api/v1/contacts/:id` - Update a contact
-- `DELETE /api/v1/contacts/:id` - Delete a contact
+2. **Frontend not connecting to Backend**:
+   - Verify API base URL in the frontend configuration
+   - Ensure the backend server is running on the expected port
 
-### Statistics
-- `GET /api/v1/stats` - Get application statistics
+3. **Authentication Issues**:
+   - Clear browser cookies and local storage
+   - Verify JWT secret in the .env file
 
 ## Project Structure
 
-```
-.
-├── Backend/
-│   ├── config/           # Configuration files
-│   ├── controllers/      # Route controllers
-│   ├── middleware/       # Express middleware
-│   ├── models/           # Mongoose models
-│   ├── routes/           # API routes
-│   ├── utils/            # Utility functions
-│   └── server.js         # Main server file
-│
-└── Frontend/
-    ├── public/           # Static files
-    ├── src/
-    │   ├── components/   # React components
-    │   ├── config/       # Configuration
-    │   ├── hooks/        # Custom React hooks
-    │   ├── layouts/      # Page layouts
-    │   ├── lib/          # Utility functions
-    │   ├── middleware/   # Client-side middleware
-    │   ├── pages/        # Page components
-    │   ├── services/     # API service calls
-    │   ├── styles/       # CSS and Tailwind styles
-    │   └── types/        # TypeScript type definitions
-    └── main.tsx          # Entry point
-```
+### Backend
+- `/config`: Configuration settings
+- `/controllers`: API endpoint handlers
+- `/middleware`: Express middleware
+- `/models`: Mongoose data models
+- `/routes`: API routes
+- `/utils`: Utility functions
+
+### Frontend
+- `/src/components`: Reusable UI components
+- `/src/hooks`: Custom React hooks
+- `/src/lib`: Utility functions
+- `/src/pages`: Page components
+- `/src/services`: API service functions
+- `/src/types`: TypeScript type definitions
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
