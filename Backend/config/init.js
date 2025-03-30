@@ -1,9 +1,9 @@
-const appConfig = require('./app.conf');
-const dbConfig = require('./db.conf');
-const dbKeys = require('./db.keys');
-const path = require('path');
-const fs = require('fs');
-const dotenv = require('dotenv');
+const appConfig = require("./app.conf");
+const dbConfig = require("./db.conf");
+const dbKeys = require("./db.keys");
+const path = require("path");
+const fs = require("fs");
+const dotenv = require("dotenv");
 
 class ConfigInitializer {
   constructor() {
@@ -12,28 +12,33 @@ class ConfigInitializer {
   }
 
   loadEnvironmentVariables() {
-    const envFile = process.env.NODE_ENV === 'production'
-      ? '.env.production'
-      : process.env.NODE_ENV === 'test'
-        ? '.env.test'
-        : '.env';
+    const envFile =
+      process.env.NODE_ENV === "production"
+        ? ".env.production"
+        : process.env.NODE_ENV === "test"
+        ? ".env.test"
+        : ".env";
 
     const envPath = path.resolve(process.cwd(), envFile);
 
     if (fs.existsSync(envPath)) {
       console.log(`Chargement des variables d'environnement depuis ${envPath}`);
       let result;
-      if(process.env.NODE_ENV === "prod"){
+      if (process.env.NODE_ENV === "prod") {
         result = dotenv.config();
-      }else {
+      } else {
         result = dotenv.config({ path: envPath });
       }
-      
+
       if (result.error) {
-        console.error(`Erreur lors du chargement des variables d'environnement: ${result.error}`);
+        console.error(
+          `Erreur lors du chargement des variables d'environnement: ${result.error}`
+        );
       }
     } else {
-      console.warn(`Fichier ${envPath} non trouvé, utilisation des variables d'environnement système`);
+      console.warn(
+        `Fichier ${envPath} non trouvé, utilisation des variables d'environnement système`
+      );
     }
   }
 
@@ -45,7 +50,7 @@ class ConfigInitializer {
     this.loadEnvironmentVariables();
 
     let dbOptions = { ...dbConfig };
-    
+
     if (process.env.MONGODB_URI) {
       dbOptions.uri = process.env.MONGODB_URI;
     }
@@ -53,7 +58,7 @@ class ConfigInitializer {
     this.config = {
       app: appConfig,
       db: dbOptions,
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || "development",
     };
 
     this.validateConfig();
@@ -64,20 +69,31 @@ class ConfigInitializer {
 
   validateConfig() {
     if (!this.config.app.server.port) {
-      throw new Error('Configuration invalide: port du serveur manquant');
+      throw new Error("Configuration invalide: port du serveur manquant");
     }
 
     if (!this.config.app.api.prefix) {
-      throw new Error('Configuration invalide: préfixe de l\'API manquant');
+      throw new Error("Configuration invalide: préfixe de l'API manquant");
     }
 
     // Vérifier si nous avons soit l'URI MongoDB, soit les informations de connexion traditionnelles
-    if (!process.env.MONGODB_URI && (!this.config.db.host || !this.config.db.port || !this.config.db.name)) {
-      throw new Error('Configuration invalide: informations de base de données manquantes');
+    if (
+      !process.env.MONGODB_URI &&
+      (!this.config.db.host || !this.config.db.port || !this.config.db.name)
+    ) {
+      throw new Error(
+        "Configuration invalide: informations de base de données manquantes"
+      );
     }
 
-    if (!dbKeys.jwtSecret || dbKeys.jwtSecret === 'your-jwt-secret-key' || dbKeys.jwtSecret === 'your-secure-jwt-secret-key-change-me-in-production') {
-      console.warn('Attention: clé JWT par défaut utilisée, à ne pas utiliser en production');
+    if (
+      !dbKeys.jwtSecret ||
+      dbKeys.jwtSecret === "your-jwt-secret-key" ||
+      dbKeys.jwtSecret === "your-secure-jwt-secret-key-change-me-in-production"
+    ) {
+      console.warn(
+        "Attention: clé JWT par défaut utilisée, à ne pas utiliser en production"
+      );
     }
   }
 
@@ -86,7 +102,7 @@ class ConfigInitializer {
       this.initialize();
     }
 
-    const keys = path.split('.');
+    const keys = path.split(".");
     let current = this.config;
 
     for (const key of keys) {

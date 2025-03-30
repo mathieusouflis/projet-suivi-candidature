@@ -1,7 +1,14 @@
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter } from "@/components/ui/card";
@@ -13,7 +20,7 @@ import { AuthContext } from "@/middleware/Token.middleware";
 const formSchema = z.object({
   email: z.string().email("Invalid email").nonempty("Email is required"),
   password: z.string().nonempty("Password is required"),
-})
+});
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -23,8 +30,8 @@ const LoginPage = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
-      password: ""
-    }
+      password: "",
+    },
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -44,9 +51,9 @@ const LoginPage = () => {
       <Card className="p-4 sm:w-sm lg:w-lg xl:w-lg">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField 
-              control={form.control} 
-              name="email" 
+            <FormField
+              control={form.control}
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
@@ -56,21 +63,23 @@ const LoginPage = () => {
                   <FormMessage className="text-red-400" />
                 </FormItem>
               )}
-              />
-            <FormField 
-              control={form.control} 
-              name="password" 
+            />
+            <FormField
+              control={form.control}
+              name="password"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input placeholder="Password" type="password" {...field} />
                   </FormControl>
-                  <FormMessage className="text-red-400"/>
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
-              />
-            <Button type="submit" className="w-full">Login</Button>
+            />
+            <Button type="submit" className="w-full">
+              Login
+            </Button>
           </form>
         </Form>
 
@@ -82,6 +91,6 @@ const LoginPage = () => {
       </Card>
     </div>
   );
-}
+};
 
 export default LoginPage;

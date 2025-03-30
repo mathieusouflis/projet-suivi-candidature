@@ -1,5 +1,5 @@
 import { callApiWithAuth } from "./apiService";
 
 export const getStats = async () => {
-    return await callApiWithAuth('/stats', 'GET');
-}
+  return await callApiWithAuth("/stats", "GET");
+};
